@@ -1,0 +1,151 @@
+
+    .main{
+        position: absolute;
+        width:100%;
+        top: 50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .center{
+        position: relative;
+        width:100%;
+        height:auto;
+    }
+    
+    .top{
+        position: relative;
+        width: 100%;
+        height: 40px;
+        background-image: url("../images/parts/cherry_back_top.png");
+    }
+
+    .bottom{
+        position: relative;
+        width: 100%;
+        height: 40px;
+        background-image: url("../images/parts/cherry_back_bottom.png");
+    }
+    
+    #hands_o, #hands_e{
+        text-align: center;
+    }
+    
+    .hand{
+        display: inline-block;
+    }
+
+    .boards{
+        width: 100%;
+        height: 100%;
+        margin: auto auto;
+        font-size: 0px;
+        position: relative;
+    }
+
+    .board{
+        top: 2%;
+        left: 2%;
+        width: 96%;
+        height: 96%;
+        position: absolute;
+        border-left: 1px solid #60392d;
+        border-bottom: 1px solid #60392d;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box;
+        background-image: url("../images/parts/bg_wood_rate.png");
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
+
+    .motigoma{
+        position:relative;
+        width:100%;
+        height:15%;
+    }
+    
+    .square{
+        width: calc(100% / 9);
+        height: calc(100% / 9);
+        display: inline-block;
+        color: black;
+        font-size: 2px;
+        text-align: center;
+        position: relative;
+        border-top: 1px solid #60392d;
+        border-right: 1px solid #60392d;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    .hand{
+        border:0px;
+    }
+
+    .selection{
+        width:calc(100% / 9);
+        height:calc(100% / 9);
+        background-color: black;
+        opacity: 0.4;
+    }
+
+    
+    .blackOut{
+        width:100%;
+        height:100%;
+        background-color: black;
+        opacity: 0.2;
+        position: absolute;
+    }
+    
+    .outOfBoards{
+        position: relative;
+        width:360px;
+        height:360px;
+        margin: auto auto;
+        font-size: 0px;
+        background-image: url("webroot/img/parts/outbg_1.png");
+        background-size: 100% 100%;
+    }
+    
+    .onTap{
+        animation: bg-color 2s infinite; 
+        -webkit-animation: bg-color 2s infinite; 
+        /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */
+    }
+
+    @-webkit-keyframes bg-color {
+      0%  { background: rgba(255,255,0,0.3); }
+      50% { background: rgba(255,255,0,0.7); }
+      100%{ background: rgba(255,255,0,0.3); }
+    }
+    
+    @keyframes bg-color {
+      0%  { background: rgba(255,255,0,0.3); }
+      50% { background: rgba(255,255,0,0.8); }
+      100%{ background: rgba(255,255,0,0.3); }
+    }
+
+    .onTaped{
+        animation: bg-color2 2s infinite; 
+        -webkit-animation: bg-color2 2s infinite; 
+        /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */
+    }
+
+    @-webkit-keyframes bg-color2 {
+        0%  { background: rgba(255, 255, 255, 0.3); }
+        50% { background: rgba(255, 255, 255, 0.7); }
+        100%{ background: rgba(255, 255, 255, 0.3); }
+      }
+      
+      @keyframes bg-color2 {
+        0%  { background: rgba(255, 255, 255, 0.3); }
+        50% { background: rgba(255, 255, 255, 0.7); }
+        100%{ background: rgba(255, 255, 255, 0.3); }
+      }

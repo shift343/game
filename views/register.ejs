@@ -1,0 +1,16 @@
+<%- include('./common/header') %>
+<link rel='stylesheet' href='/stylesheets/login.css' />
+
+<!-- form starts here -->
+<form action="/register" method="post" class="sign-up">
+  <h1 class="sign-up-title">New Player</h1>
+  <input type="text" class="sign-up-input" name="player_name" placeholder="What's your username?" autofocus>
+  <input type="password" class="sign-up-input" name="password" placeholder="Choose a password">
+  <input type="submit" value="登録" class="sign-up-button">
+
+  <% if (typeof nameExists !== 'undefined') { %>
+  <p class="error" style="color:red; text-align:center;"><%- nameExists %></p>
+  <% } %>
+</form>
+
+<%- include('./common/footer') %>

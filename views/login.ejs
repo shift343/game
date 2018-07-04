@@ -1,0 +1,32 @@
+<%- include('./common/header') %>
+<link rel='stylesheet' href='/stylesheets/login.css' />
+
+<!-- form starts here -->
+<form action="/login" method="post" class="sign-up">
+  <h1 class="sign-up-title">User Login</h1>
+  <input type="text" class="sign-up-input" name="player_name" placeholder="What's your username?" autofocus>
+  <input type="password" class="sign-up-input" name="password" placeholder="Choose a password">
+  <input type="submit" value="ログイン" class="sign-up-button">
+  <a href="./register" style="margin-left:160px; padding-top:10px;">新規登録はこちら</a>
+
+  <% if (typeof noUser !== 'undefined') { %>
+  <p class="error" style="color:red; text-align:center;"><%- noUser %></p>
+  <% } %>
+</form>
+
+<div class="sign-up" style="margin-top:-25px; text-align:center;">
+  <p style="position:absolute; top:0px; left:32%;">デバッグ用ログイン</p>
+  <form action="/login" method="post" style="width:40%; display:inline-block;">
+    <input type="hidden" class="sign-up-input" name="player_name" value="aaa">
+    <input type="hidden" class="sign-up-input" name="password" value="bbb">
+    <input type="submit" value="先手" class="sign-up-button">
+  </form>
+
+  <form action="/login" method="post" style="width:40%; display:inline-block;">
+    <input type="hidden" class="sign-up-input" name="player_name" value="yoko">
+    <input type="hidden" class="sign-up-input" name="password" value="fox">
+    <input type="submit" value="後手" class="sign-up-button">
+  </form>
+</div>
+
+<%- include('./common/footer') %>

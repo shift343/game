@@ -1,0 +1,66 @@
+<%- include('./common/header') %>
+<link rel='stylesheet' href='/stylesheets/board.css' />
+
+<script src='/socket.io/socket.io.js'></script>
+<script>
+  // クリックorタップできる方を判定
+  let clickEventType=((window.ontouchstart!==null)?'click':'touchstart');
+
+  // ユーザー情報をまとめ直し
+  let playerInfo = {
+    id:"<%=own.id%>",
+    name:"<%=own.name%>",
+    rate:"<%=own.rate%>"
+  };
+
+  //socket通信開始
+  let socket = io('/matching');
+
+  $(function(){
+    // マッチング開始
+    $("#versusBtn").on(clickEventType,function() {
+      socket.emit("matchingStart", playerInfo);
+      $(this).attr('value', '対戦相手を待っています...').attr('disabled', true);
+    });
+
+    // マッチング終了
+    socket.on("matchingEnd", function (record) {
+
+      // 2人揃った状態ならば
+      if(record != undefined){
+
+        // Post送信
+        var form = document.createElement("form");
+        form.setAttribute("action", "/matching"); // 投げたいURLを書く。
+        form.setAttribute("method", "post"); // POSTリクエストもしくはGETリクエストを書く。
+        form.style.display = "none"; // 画面に表示しないことを指定する
+        document.body.appendChild(form);
+        if (record !== undefined) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', 'roomId');
+            input.setAttribute('value', record.roomId); // 部屋情報
+            form.appendChild(input);
+            var input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', 'sente');
+            input.setAttribute('value', record.sente); // 先手id
+            form.appendChild(input);
+            var input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', 'gote');
+            input.setAttribute('value', record.gote); // 後手id
+            form.appendChild(input);
+        }
+        form.submit();
+      }
+    });
+  });
+</script>
+
+<div style="margin-left:10%;margin-right:10%;margin-top:50%">
+  <input id="versusBtn" type="submit" value="対局開始" style="width:100%;padding:10px;font-size:30px;"></input>
+</div>
+
+
+<%- include('./common/footer') %>
