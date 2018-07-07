@@ -383,5 +383,24 @@ class Board {
         return check;
     }
 
+    // 盤面を軽い配列に変換
+    convertBoard(board) {
+        // board情報を基にインスタンスを再生成
+        // for (let piece in board) {
+        //     var koma = board[piece].koma;
+        //     var position = board[piece].position;
+        //     var isSente = board[piece].isSente;
+        //     var isHold = board[piece].isHold;
+        //     var isEvolve = board[piece].isEvolve;
+        //     if(board[piece].isOwn == isOwn){
+        //         this[piece]   = new Piece(koma,position,isSente,true,isHold,isEvolve);
+        //     }else{
+        //         this[piece]   = new Piece(koma,position,isSente,false,isHold,isEvolve);
+        //     }
+        // };
+
+        console.log(board);
+    }
+
 
 }

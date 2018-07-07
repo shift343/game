@@ -127,16 +127,16 @@ function sortHand(board){
 
 function setHand(sortHand){
 
-  $("#hands_o").children(".hand").remove();
-  $("#hands_e").children(".hand").remove();
+  $("#own").children(".hand").remove();
+  $("#enemy").children(".hand").remove();
 
   for (let piece in sortHand) {
     if(sortHand[piece].isOwn) {
       let komaImg = getKomaImg(sortHand[piece].koma,true);
-      $("#hands_o").append("<div class='hand square isOwn' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
+      $("#own").append("<div class='hand square isOwn' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
     } else {
       let komaImg = getKomaImg(sortHand[piece].koma,false);
-      $("#hands_e").append("<div class='hand square isEnemy' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
+      $("#enemy").append("<div class='hand square isEnemy' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
     }
   }
 }
