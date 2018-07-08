@@ -15,17 +15,11 @@
 </form>
 
 <div class="sign-up" style="margin-top:-25px; text-align:center;">
-  <p style="position:absolute; top:0px; left:32%;">デバッグ用ログイン</p>
-  <form action="/login" method="post" style="width:40%; display:inline-block;">
+  <p style="text-align:center;">デバッグ用</p>
+  <form action="/login/byGuest" method="post" style="width:75%; display:inline-block;">
     <input type="hidden" class="sign-up-input" name="player_name" value="aaa">
     <input type="hidden" class="sign-up-input" name="password" value="bbb">
-    <input type="submit" value="先手" class="sign-up-button">
-  </form>
-
-  <form action="/login" method="post" style="width:40%; display:inline-block;">
-    <input type="hidden" class="sign-up-input" name="player_name" value="yoko">
-    <input type="hidden" class="sign-up-input" name="password" value="fox">
-    <input type="submit" value="後手" class="sign-up-button">
+    <input type="submit" value="ゲストログイン" class="sign-up-button">
   </form>
 </div>
 

@@ -30,4 +30,30 @@ router.post('/', function(req, res, next) {
   });
 });
 
+/* ゲストログイン用簡易ユーザー登録 */
+router.post('/byGuest', function(req, res, next) {
+
+  //使用文字の定義
+  var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&";
+ 
+  //桁数の定義
+  var len = 8;
+ 
+  //ランダムな文字列の生成
+  var name = "";
+  for(var i=0;i<len;i++){
+    name += str.charAt(Math.floor(Math.random() * str.length));
+  }
+  
+  // 新規ユーザー登録
+  var newPlayer = new playerInfo({
+    name: name,
+    password: name
+  });
+  newPlayer.save().then((record) => {
+    req.session.own = record;
+    res.redirect('/');
+  });
+});
+
 module.exports = router;
