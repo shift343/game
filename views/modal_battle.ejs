@@ -1,0 +1,23 @@
+<link rel='stylesheet' href='/stylesheets/modal.css' />
+<script>
+    $(document).ready(function(){
+        // モーダル表示
+        $('#modal-container').removeAttr('class').addClass('match');
+        $('body').addClass('modal-active');
+        setTimeout(function(){
+            $('#modal-container').addClass('out');
+            $('body').removeClass('modal-active');
+        },3000);
+    });
+</script>
+
+<div id="modal-container">
+    <div class="modal-background">
+        <div class="modal">
+            <h2>player<%=matchingInfo.sente%></h2>
+            <p>vs</p>
+            <h2>player<%=matchingInfo.gote%></h2>
+            <p>あなたは<% if(matchingInfo.sente == own.id){ %> 先手です <% }else{ %> 後手です <% } %> </p>
+        </div>
+    </div>
+</div>

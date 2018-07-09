@@ -1,23 +1,26 @@
 <%- include('./common/header') %>
 
+<%/* jsファイル読み込み */%>
 <script type="text/javascript" src="javascripts/common.js"></script>
 <script type="text/javascript" src="javascripts/game.js"></script>
 <script type="text/javascript" src="javascripts/piece.js"></script>
 <script type="text/javascript" src="javascripts/board.js"></script>
 <script type="text/javascript" src="javascripts/komaAction.js"></script>
-<link rel='stylesheet' href='/stylesheets/board.css' />
-<link rel='stylesheet' href='/stylesheets/modal.css' />
-
 <script src='/socket.io/socket.io.js'></script>
+
+<%/* テンプレートファイル読み込み */%>
+<%- include('./modal_battle.ejs')%>
+<%- include('./board_battle.ejs')%>
+
 <script>
   // クリックorタップできる方を判定
-  let clickEventType=((window.ontouchstart!==null)?'click':'touchstart');
+  let clickEventType=((window.ontouchstart!==null) ? 'click' : 'touchstart');
 
   // socket通信開始
   let socket = io('/battle');
 
   // 対局情報を詰めておく
-  let game = new Game();
+  let game      = new Game();
   game.ownId    = <%=own.id%>;
   game.roomId   = <%=matchingInfo.roomId%>;
   game.isSente  = <%=matchingInfo.sente%>;
@@ -27,20 +30,12 @@
   let board = <%- JSON.stringify(boardInfo) %>;
 
   // 手番情報
-  let teban = <%=matchingInfo.sente == own.id%> ? true: false;
+  let teban = game.ownId == game.isSente ? true : false;
 
   $(document).ready(function(){
 
-    // モーダル表示
-    $('#modal-container').removeAttr('class').addClass('match');
-    $('body').addClass('modal-active');
-    setTimeout(function(){
-      $('#modal-container').addClass('out');
-      $('body').removeClass('modal-active');
-    },3000);
-
     // 部屋に入室
-    socket.emit("joinBattle", "<%=matchingInfo.roomId%>");
+    socket.emit("joinBattle", game.roomId);
 
     // 駒画像初期表示
     dispInitKomaImg();
@@ -48,18 +43,20 @@
     // 盤面更新
     socket.on("updateBoard", function (data) {
 
-      // データ上
-      board = new Board(null,null,data.board,true);
+      // 盤面クラスを生成
+      board = new Board(data.board,true);
 
+      // 相手視点のみ移動範囲を生成
       if(!data.isOwn) {
         board.extractLegalArea(board.showMoveArea(board));
       }
 
-      // 見かけ上
+      // 画面更新
       updateKomaImg(data.koma,data.moveFrom,data.moveTo,data.isOwn);
 
+      // 駒入れ替えがあった場合
       if(data.target){
-        setHand(sortHand(board));
+        setHand(board);
       }
 
       // 手番更新
@@ -107,6 +104,9 @@
               }
             }
 
+            // 単純化した配列に変換
+            board = convertBoard(board);
+
             let socketInfo = {
               roomId:game.roomId,
               board:board,
@@ -141,77 +141,6 @@
 
   });
 </script>
-
-<div id="content">
-
-  <div class="top">
-    <div id="enemy"></div>
-    <div class="giveUp"></div>
-  </div>
-
-  <div class="boards">
-    <img src="/images/parts/outBoard.png" width="100%" height="100%">
-    <div class="board">
-      <% if(own.id == matchingInfo.sente){ %>
-        <% for (var i = 1; i <= 9; i=i+1) { %>
-          <% for (var j = 90; j >= 10; j=j-10) { %>
-            <% if(boardInfo[i+j] !== undefined){ %>
-              <% if(boardInfo[i+j].isOwn){ %>
-                <div class="square isOwn" id="<%= i+j %>" name="<%-boardInfo[i+j].koma%>" tap="0">
-                  <div></div>
-                </div>
-              <% }else{ %>
-                <div class="square isEnemy" id="<%= i+j %>" name="<%-boardInfo[i+j].koma%>" tap="0">
-                  <div></div>
-                </div>
-              <% } %>
-            <% }else{ %> 
-              <div class="square" id="<%= i+j %>" name=" " tap="0">
-                <div></div>
-              </div>
-            <% } %>
-          <% } %>
-        <% } %>
-      <% } else { %>
-        <% for (var i = 9; i >= 1; i=i-1) { %>
-          <% for (var j = 10; j <= 90; j=j+10) { %>
-            <% if(boardInfo[i+j] !== undefined){ %>
-              <% if(boardInfo[i+j].isOwn){ %>
-                <div class="square isOwn" id="<%= i+j %>" name="<%-boardInfo[i+j].koma%>" tap="0">
-                  <div></div>
-                </div>
-              <% }else{ %>
-                <div class="square isEnemy" id="<%= i+j %>" name="<%-boardInfo[i+j].koma%>" tap="0">
-                  <div></div>
-                </div>
-              <% } %>
-            <% }else{ %> 
-              <div class="square" id="<%= i+j %>" name=" " tap="0">
-                <div></div>
-              </div>
-            <% } %>
-          <% } %>
-        <% } %>
-      <% } %>
-    </div>
-  </div>
-
-  <div class="bottom">
-    <div id="own"></div>
-  </div>
-
-</div>
-
-<div id="modal-container">
-  <div class="modal-background">
-    <div class="modal">
-      <h2>player<%=matchingInfo.sente%></h2>
-      <p>vs</p>
-      <h2>player<%=matchingInfo.gote%></h2>
-      <p>あなたは<% if(matchingInfo.sente == own.id){ %> 先手です <% }else{ %> 後手です <% } %> </p>
-    </div>
-  </div>
-</div>
 
 
 <%- include('./common/footer') %>

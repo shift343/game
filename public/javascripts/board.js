@@ -1,60 +1,60 @@
 class Board {
 
-    constructor(ownData,matchingData,board,isOwn){
-        if(board == null || board == undefined) {
-            this.init(ownData,matchingData);
+    constructor(board,isConvert){
+        if(isConvert){
+            this.convertBoard(board);
         } else {
-            this.reCreateBoard(board,isOwn);
+            this.reCreateBoard(board);
         }
     }
 
-    init(ownData,matchingData){
-
-        let InitPlace = {
-            91:201,81:202,71:203,61:204,51:207,41:204,31:203,21:202,11:201,
-            82:206,22:205,
-            93:200,83:200,73:200,63:200,53:200,43:200,33:200,23:200,13:200,
-
-            97:100,87:100,77:100,67:100,57:100,47:100,37:100,27:100,17:100,
-            28:106,88:105,
-            99:101,89:102,79:103,69:104,59:107,49:104,39:103,29:102,19:101
-        };
+    // 盤面生成
+    convertBoard(board){
         
         // 駒のインスタンスを生成
-        for (let pos in InitPlace) {
-            if (InitPlace[pos] >= game.GOTE) {
-                var koma = InitPlace[pos] - game.GOTE;
-                var position = pos;
-                var isSente = false;
-                var isOwn = (matchingData.gote == ownData.id) ? true: false;
-                var isHold = (position > 1000) ? true : false;
-                var isEvolve = false;
-                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
-            }else{
-                var koma = InitPlace[pos] - game.SENTE;
-                var position = pos;
-                var isSente = true;
-                var isOwn = (matchingData.sente == ownData.id) ? true: false;
-                var isHold = (position > 1000) ? true : false;
-                var isEvolve = false;
-                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+        for (let pos in board) {
+            if(pos > game.HOLD) {
+                if (pos >= game.HOLD + game.GOTE) {
+                    var koma = board[pos];
+                    var position = pos;
+                    var isSente = false;
+                    var isOwn = (game.ownId == game.isGote) ? true : false;
+                    var isHold = true;
+                    var isEvolve = false;
+                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+                }else{
+                    var koma = board[pos];
+                    var position = pos;
+                    var isSente = true;
+                    var isOwn = (game.ownId == game.isSente) ? true : false;
+                    var isHold = true;
+                    var isEvolve = false;
+                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+                }                
+            } else {
+                if (board[pos] >= game.GOTE) {
+                    var koma = board[pos] - game.GOTE;
+                    var position = pos;
+                    var isSente = false;
+                    var isOwn = (game.ownId == game.isGote) ? true: false;
+                    var isHold = (position >= 1000) ? true : false;
+                    var isEvolve = false;
+                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+                }else{
+                    var koma = board[pos] - game.SENTE;
+                    var position = pos;
+                    var isSente = true;
+                    var isOwn = (game.ownId == game.isSente) ? true: false;
+                    var isHold = (position >= 1000) ? true : false;
+                    var isEvolve = false;
+                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+                }
             }
         };
-
-        this.showMoveArea(this);
-        //this.extractLegalArea(this.showMoveArea(this));
     }
 
-    // 盤面の更新
-    updateBoard(komaInfo,isOwn) {
-
-        this[komaInfo.toPos] = new Piece(komaInfo.koma,komaInfo.toPos,komaInfo.isSente,isOwn);
-        delete this[komaInfo.fromPos];
-
-    }
-
-    // 盤面再生成
-    reCreateBoard(board,isOwn){
+    // 盤面複製
+    reCreateBoard(board){
 
         // board情報を基にインスタンスを再生成
         for (let piece in board) {
@@ -63,12 +63,20 @@ class Board {
             var isSente = board[piece].isSente;
             var isHold = board[piece].isHold;
             var isEvolve = board[piece].isEvolve;
-            if(board[piece].isOwn == isOwn){
+            if(board[piece].isOwn){
                 this[piece]   = new Piece(koma,position,isSente,true,isHold,isEvolve);
             }else{
                 this[piece]   = new Piece(koma,position,isSente,false,isHold,isEvolve);
             }
         };
+    }
+
+    // 盤面の更新
+    updateBoard(komaInfo,isOwn) {
+
+        this[komaInfo.toPos] = new Piece(komaInfo.koma,komaInfo.toPos,komaInfo.isSente,isOwn);
+        delete this[komaInfo.fromPos];
+
     }
 
     // 移動可能範囲生成
@@ -177,7 +185,7 @@ class Board {
     extractLegalArea(board){
 
         // 一時的に上書き用のクラスを作る
-        let tempBoard = new Board(null,null,board,true);
+        let tempBoard = new Board(board,false);
 
         // 駒打ちの場合は合法手算出を再利用する
         let legalShotArea_hu, legalShotArea_ky, legalShotArea_ke, legalShotArea_other;
@@ -382,25 +390,5 @@ class Board {
         }
         return check;
     }
-
-    // 盤面を軽い配列に変換
-    convertBoard(board) {
-        // board情報を基にインスタンスを再生成
-        // for (let piece in board) {
-        //     var koma = board[piece].koma;
-        //     var position = board[piece].position;
-        //     var isSente = board[piece].isSente;
-        //     var isHold = board[piece].isHold;
-        //     var isEvolve = board[piece].isEvolve;
-        //     if(board[piece].isOwn == isOwn){
-        //         this[piece]   = new Piece(koma,position,isSente,true,isHold,isEvolve);
-        //     }else{
-        //         this[piece]   = new Piece(koma,position,isSente,false,isHold,isEvolve);
-        //     }
-        // };
-
-        console.log(board);
-    }
-
 
 }

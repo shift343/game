@@ -85,54 +85,47 @@ battle.on("connection", function (socket) {
     let komaInfo  = data.komaInfo;  // 駒情報
     let fromPos   = data.fromPos;   // 移動前
     let toPos     = data.toPos;     // 移動先
+    let key       = null;           // 駒入れ替え
 
-    // 移動先に駒があった時は、その駒を保管する
-    let min_key = 1000;
+    // 移動先に駒がある場合は、その駒を保管する
     let target = board[toPos];
 
     if(target) {
-      for (let key in board) {
-        if(key > min_key) {
-          min_key = key;
-        }
-      };
-      min_key++;
-      target = new Piece(board[toPos].koma,toPos,board[toPos].isSente,false,false,board[toPos].isEvolve);
-      target.setHold();
-
-      target.position = min_key;
-      board[min_key] = target;
+      let koma = (target > global.rule.GOTE) ? target - global.rule.GOTE : target - global.rule.SENTE;
+      koma = global.rule.REVERSE[koma] ? global.rule.REVERSE[koma] : koma;
+      key = (target > global.rule.GOTE) ? koma + global.rule.HOLD + global.rule.GOTE : koma + global.rule.HOLD + global.rule.SENTE;
+      board[key] ? board[key]++ : board[key] = 1 ;
     }
 
+    // 成りがあるか
+    komaInfo.koma = komaInfo.isEvolve ? global.rule.EVOLVE[komaInfo.koma] : komaInfo.koma;
+
     // 移動先のマスを更新
-    board[toPos] = new Piece(komaInfo.koma,toPos,komaInfo.isSente,true,false,komaInfo.isEvolve);
+    board[toPos] = komaInfo.isSente ? komaInfo.koma + global.rule.SENTE : komaInfo.koma + global.rule.GOTE;
 
     // 移動元のマスを削除
     delete board[fromPos];
 
-    // 相手用の盤面を生成
-    let board_enemy   = new Board(null,null,board,false);
-
     // 自分に送る情報をまとめる
     ownData = {
       board:board,
-      koma:board[toPos].koma,
+      koma:komaInfo.koma,
       moveFrom:fromPos,
       moveTo:toPos,
       isOwn:true,
       teban:false,
-      target:board[min_key]
+      target:board[key]
     }
 　
     // 相手に送る情報をまとめる
     enemyData = {
-      board:board_enemy,
-      koma:board[toPos].koma,
+      board:board,
+      koma:komaInfo.koma,
       moveFrom:fromPos,
       moveTo:toPos,
       isOwn:false,
       teban:true,
-      target:board_enemy[min_key]
+      target:board[key]
     }
 
     // 盤面情報を送る

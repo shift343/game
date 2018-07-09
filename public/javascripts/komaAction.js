@@ -1,4 +1,3 @@
-
 //駒画像を表示する関数
 function dispInitKomaImg(){
     $(".isOwn").each(function() {
@@ -13,9 +12,6 @@ function dispInitKomaImg(){
         $(this).append("<img src='/images/pieces/"+komaImg+"' height='100%'>");
     });
 }
-
-//setHand(sortHand(board));
-
 
 function updateKomaImg(koma,moveFrom,moveTo,isOwn){
 
@@ -108,35 +104,38 @@ function getKomaImg(koma,isOwn){
     }
 }
 
-// 手駒を価値が低い順にソート
-function sortHand(board){
-  
-  let sortArray = [];
-
-  for (let piece in board) {
-    if(piece > 1000) {
-      sortArray.push(board[piece]);
-    }
-  }
-  sortArray.sort(function(a, b) {
-      return (a.koma < b.koma) ? -1 : 1;
-  });
-  return sortArray;
-
-}
-
-function setHand(sortHand){
+function setHand(board){
 
   $("#own").children(".hand").remove();
   $("#enemy").children(".hand").remove();
 
-  for (let piece in sortHand) {
-    if(sortHand[piece].isOwn) {
-      let komaImg = getKomaImg(sortHand[piece].koma,true);
-      $("#own").append("<div class='hand square isOwn' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
-    } else {
-      let komaImg = getKomaImg(sortHand[piece].koma,false);
-      $("#enemy").append("<div class='hand square isEnemy' id='"+ sortHand[piece].position +"' name='"+ sortHand[piece].koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
+  for (let piece in board) {
+    if(piece > game.HOLD) {
+      if(board[piece].isOwn) {
+        let koma = (piece > (game.HOLD + game.GOTE)) ? piece - (game.HOLD + game.GOTE) : piece - (game.HOLD + game.SENTE);
+        let komaImg = getKomaImg(koma,true);
+        $("#own").append("<div class='hand square isOwn' id='"+ board[piece].position +"' name='"+ koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
+      } else {
+        let koma = (piece > (game.HOLD + game.GOTE)) ? piece - (game.HOLD + game.GOTE) : piece - (game.HOLD + game.SENTE);
+        let komaImg = getKomaImg(koma,false);
+        $("#enemy").append("<div class='hand square isEnemy' id='"+ board[piece].position +"' name='"+ koma +"' tap='0'><img src='/images/pieces/"+komaImg+"' height='100%'></div>");
+      }
     }
   }
+}
+
+function convertBoard(board){
+  let result = {};
+  for (let piece in board) {
+    if(piece > game.HOLD){
+      result[piece] = board[piece].koma;
+    } else {
+      if(board[piece].isSente) {
+        result[piece] = board[piece].koma + 100;
+      }else{
+        result[piece] = board[piece].koma + 200;
+      }
+    }
+  }
+  return result;
 }

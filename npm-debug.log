@@ -9,8 +9,8 @@
 6 silly lifecycle ex-gen-app@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle ex-gen-app@0.0.0~start: ex-gen-app@0.0.0
 8 verbose lifecycle ex-gen-app@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle ex-gen-app@0.0.0~start: PATH: /Users/user/.nodebrew/node/v6.10.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/user/Desktop/ex-gen-app/node_modules/.bin:/Users/user/.nodebrew/node/v6.10.0/bin:/opt/local/bin:/opt/local/sbin:/Users/user/.nodebrew/current/bin:/usr/local/php5/bin:/anaconda/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-10 verbose lifecycle ex-gen-app@0.0.0~start: CWD: /Users/user/Desktop/ex-gen-app
+9 verbose lifecycle ex-gen-app@0.0.0~start: PATH: /Users/user/.nodebrew/node/v6.10.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/user/Desktop/shogi/node_modules/.bin:/Users/user/.nodebrew/node/v6.10.0/bin:/opt/local/bin:/opt/local/sbin:/Users/user/.nodebrew/current/bin:/usr/local/php5/bin:/anaconda/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+10 verbose lifecycle ex-gen-app@0.0.0~start: CWD: /Users/user/Desktop/shogi
 11 silly lifecycle ex-gen-app@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]
 12 silly lifecycle ex-gen-app@0.0.0~start: Returned: code: 1  signal: null
 13 info lifecycle ex-gen-app@0.0.0~start: Failed to exec start script
@@ -25,7 +25,7 @@
 14 verbose stack     at maybeClose (internal/child_process.js:877:16)
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:226:5)
 15 verbose pkgid ex-gen-app@0.0.0
-16 verbose cwd /Users/user/Desktop/ex-gen-app
+16 verbose cwd /Users/user/Desktop/shogi
 17 error Darwin 16.7.0
 18 error argv "/Users/user/.nodebrew/node/v6.10.0/bin/node" "/Users/user/.nodebrew/current/bin/npm" "start"
 19 error node v6.10.0

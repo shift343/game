@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
   res.render('battle',{
     own:req.session.own, //ユーザー情報
     matchingInfo:req.session.matching, //対局情報
-    boardInfo:board //盤面情報と移動範囲
+    boardInfo:board //盤面情報
   });
 });
 

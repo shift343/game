@@ -4,6 +4,8 @@ class Game {
         // 固定要素
         this.SENTE = 100;
         this.GOTE  = 200;
+        this.HOLD  = 1000;
+
         this.HU    = 0;
         this.KY    = 1;
         this.KE    = 2;
