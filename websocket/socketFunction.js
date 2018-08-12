@@ -1,12 +1,7 @@
 let global = require('../global.js');
-let common = require('../common');
 let io = require('socket.io').listen(global.server);
 let models = require('../models');
 let matchingInfo = models.cmn_battle_matching;
-
-// モジュール読み込み
-const Piece = require('../library/piece');
-const Board = require('../library/board');
 
 // マッチング用の名前空間
 let matching = io.of('/matching');
@@ -80,52 +75,37 @@ battle.on("connection", function (socket) {
   // 駒移動処理
   socket.on("moveKoma", function (data) {
 
-    let roomId    = data.roomId;    // 部屋ID
-    let board     = data.board;     // 盤面情報
-    let komaInfo  = data.komaInfo;  // 駒情報
-    let fromPos   = data.fromPos;   // 移動前
-    let toPos     = data.toPos;     // 移動先
-    let key       = null;           // 駒入れ替え
+    let roomId     = data.roomId;     // 部屋ID
+    let board      = data.board;      // 盤面情報
+    let moveFrom   = data.fromPos;    // 移動前
+    let moveTo     = data.toPos;      // 移動先
+    let koma       = board[moveFrom]; // 駒情報
+    let isEvolve   = data.isEvolve;   // 駒成か
+    let isHold     = board[moveTo] ? true : false; // 駒取か
 
-    // 移動先に駒がある場合は、その駒を保管する
-    let target = board[toPos];
-
-    if(target) {
-      let koma = (target > global.rule.GOTE) ? target - global.rule.GOTE : target - global.rule.SENTE;
-      koma = global.rule.REVERSE[koma] ? global.rule.REVERSE[koma] : koma;
-      key = (target > global.rule.GOTE) ? koma + global.rule.HOLD + global.rule.GOTE : koma + global.rule.HOLD + global.rule.SENTE;
-      board[key] ? board[key]++ : board[key] = 1 ;
-    }
-
-    // 成りがあるか
-    komaInfo.koma = komaInfo.isEvolve ? global.rule.EVOLVE[komaInfo.koma] : komaInfo.koma;
-
-    // 移動先のマスを更新
-    board[toPos] = komaInfo.isSente ? komaInfo.koma + global.rule.SENTE : komaInfo.koma + global.rule.GOTE;
-
-    // 移動元のマスを削除
-    delete board[fromPos];
+    // 盤面の更新
+    board = global.rule.UpdateBoard(board,koma,moveFrom,moveTo,isEvolve);
 
     // 自分に送る情報をまとめる
     ownData = {
       board:board,
-      koma:komaInfo.koma,
-      moveFrom:fromPos,
-      moveTo:toPos,
+      koma:koma,
+      moveFrom:moveFrom,
+      moveTo:moveTo,
       isOwn:true,
       teban:false,
-      target:board[key]
+      isHold:isHold
     }
 　
     // 相手に送る情報をまとめる
     enemyData = {
       board:board,
-      koma:komaInfo.koma,
-      moveFrom:fromPos,
-      moveTo:toPos,
+      koma:koma,
+      moveFrom:moveFrom,
+      moveTo:moveTo,
       isOwn:false,
       teban:true,
-      target:board[key]
+      isHold:isHold
     }
 
     // 盤面情報を送る

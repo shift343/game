@@ -9,7 +9,7 @@
 <script src='/socket.io/socket.io.js'></script>
 
 <%/* テンプレートファイル読み込み */%>
-<%- include('./modal_battle.ejs')%>
+<%/*- include('./door.ejs') */%>
 <%- include('./board_battle.ejs')%>
 
 <script>
@@ -23,8 +23,8 @@
   let game      = new Game();
   game.ownId    = <%=own.id%>;
   game.roomId   = <%=matchingInfo.roomId%>;
-  game.isSente  = <%=matchingInfo.sente%>;
-  game.isGote   = <%=matchingInfo.gote%>;
+  game.isSente  = <%=matchingInfo.sente.id%>;
+  game.isGote   = <%=matchingInfo.gote.id%>;
 
   // 初期盤面配置
   let board = <%- JSON.stringify(boardInfo) %>;
@@ -51,11 +51,13 @@
         board.extractLegalArea(board.showMoveArea(board));
       }
 
+      let komaBase = game.Koma_Base[data.koma];
+
       // 画面更新
-      updateKomaImg(data.koma,data.moveFrom,data.moveTo,data.isOwn);
+      updateKomaImg(komaBase,data.moveFrom,data.moveTo,data.isOwn);
 
       // 駒入れ替えがあった場合
-      if(data.target){
+      if(data.isHold){
         setHand(board);
       }
 
@@ -110,9 +112,9 @@
             let socketInfo = {
               roomId:game.roomId,
               board:board,
-              komaInfo:komaInfo,
               fromPos:komaInfo.position,
-              toPos:toPos
+              toPos:toPos,
+              isEvolve:komaInfo.isEvolve
             }
 
             // サーバーに送信

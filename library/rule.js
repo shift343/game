@@ -17,8 +17,10 @@ let Rule = {
     NGI  :11,
     NKA  :12,
     NHI  :13,
-    EVOLVE  : {0:8,1:9,2:10,3:11,5:12,6:13},
-    REVERSE : {8:0,9:1,10:2,11:3,12:5,13:6},
+
+    EVOLVE  : {100:108,101:109,102:110,103:111,105:112,106:113,200:208,201:209,202:210,203:211,205:212,206:213},
+    REVERSE : {100:200,101:201,102:202,103:203,104:204,105:205,106:206,107:207,108:200,109:201,110:202,111:203,112:205,113:206,
+               200:100,201:101,202:102,203:103,204:104,205:105,206:106,207:107,208:100,209:101,210:102,211:103,212:105,213:106},
 
     Guardian : [0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,101,102,103,104,105,106,107,108,109,110],
 
@@ -40,7 +42,34 @@ let Rule = {
     Suji_6th : [61,62,63,64,65,66,67,68,69],
     Suji_7th : [71,72,73,74,75,76,77,78,79],
     Suji_8th : [81,82,83,84,85,86,87,88,89],
-    Suji_9th : [91,92,93,94,95,96,97,98,99]
+    Suji_9th : [91,92,93,94,95,96,97,98,99],
+
+    // 駒が成る
+    EvolveKoma : function (koma) {
+        koma = this.EVOLVE[koma];
+        return koma;
+    },
+
+    // 駒を取る
+    HoldKoma : function (board,moveTo) {
+        let koma = this.REVERSE[board[moveTo]];
+        let key = koma + this.HOLD;
+        board[key] ? board[key]++ : board[key] = 1;
+        return board;
+    },
+
+    // 盤面を更新する
+    UpdateBoard : function (board,koma,moveFrom,moveTo,isEvolve) {
+        if(isEvolve) {
+            koma = this.EvolveKoma(koma);
+        }
+        if(board[moveTo]) {
+            board = this.HoldKoma(board,moveTo);
+        }
+        delete board[moveFrom];
+        board[moveTo] = koma;
+        return board;
+    }
 
 
 };

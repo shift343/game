@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const common = require('../common');
+const playerInfo = require('../library/db/sql/player/player_info');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,10 +17,24 @@ router.post('/', function(req, res, next) {
     sente:req.body.sente,
     gote:req.body.gote
   }
+  
+  playerInfo.getPlayerInfoByMatchingInfo(matchingInfo).then(function(value){
+    // プレイヤー情報があれば上書き
+    if(value) {
+      matchingInfo.sente = value.sente;
+      matchingInfo.gote  = value.gote;
+    }
 
-  //console.log(JSON.stringify(req.body.matchingInfo.roomId));
-  req.session.matching = matchingInfo; //試合情報をsessionに詰める
-  res.redirect('/battle');
+    req.session.matching = matchingInfo; //試合情報をsessionに詰める
+    res.redirect('/battle');
+  }).catch(function(error){
+    console.log("マッチングに失敗しました");
+    res.redirect('/');
+  });
+  
+
+
+
 });
 
 

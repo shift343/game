@@ -4,7 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index'); //トップページ用
+require('./commonFunc'); //汎用的に使うグローバル関数
+require('./globalVar');  //将棋関連を定義したグローバル変数
+require('./globalFunc'); //将棋関連を定義したグローバル関数
+
+var indexRouter = require('./routes/index'); //タイトル用
+var topRouter = require('./routes/top'); //メニュー画面用
 var registerRouter = require('./routes/register'); //初回登録用
 var loginRouter = require('./routes/login'); //ログイン用
 var usersRouter = require('./routes/users');
@@ -46,6 +51,7 @@ var sessionCheck = function(req, res, next) {
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/', sessionCheck, indexRouter);
+app.use('/top', topRouter);
 app.use('/users', usersRouter);
 app.use('/battle', battleRouter);
 app.use('/matching', matchingRouter);

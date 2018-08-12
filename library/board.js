@@ -1,51 +1,78 @@
 class Board {
 
+    // 盤面配列を渡すと盤面クラス生成、渡さないと初期化
     constructor(ownData,matchingData,board,isOwn){
-        if(board == null || board == undefined) {
-            this.init(ownData,matchingData);
-        } else {
-            this.reCreateBoard(board,isOwn);
-        }
+        board == undefined ? this.init(ownData,matchingData) : this.reCreateBoard(board,isOwn);
     }
 
     init(ownData,matchingData){
 
         let Piece = require('./piece');
-        let global = require('../global');
 
         let InitPlace = {
-            91:201,81:202,71:203,61:204,51:207,41:204,31:203,21:202,11:201,
-            82:206,22:205,
-            93:200,83:200,73:200,63:200,53:200,43:200,33:200,23:200,13:200,
-
-            97:100,87:100,77:100,67:100,57:100,47:100,37:100,27:100,17:100,
-            28:106,88:105,
-            99:101,89:102,79:103,69:104,59:107,49:104,39:103,29:102,19:101
+            91:201, 81:202, 71:203, 61:204, 51:207, 41:204, 31:203, 21:202, 11:201,
+            92:null,82:206, 72:null,62:null,52:null,42:null,32:null,22:205, 12:null,
+            93:200, 83:200, 73:200, 63:200, 53:200, 43:200, 33:200, 23:200, 13:200,
+            94:null,84:null,74:null,64:null,54:null,44:null,34:null,24:null,14:null,
+            95:null,85:null,75:null,65:null,55:null,45:null,35:null,25:null,15:null,
+            96:null,86:null,76:null,66:null,56:null,46:null,36:null,26:null,16:null,
+            97:100, 87:100, 77:100, 67:100, 57:100, 47:100, 37:100, 27:100, 17:100,
+            98:null,88:105, 78:null,68:null,58:null,48:null,38:null,28:106, 18:null,
+            99:101, 89:102, 79:103, 69:104, 59:107, 49:104, 39:103, 29:102, 19:101,
+            1100:null,1101:null,1102:null,1103:null,1104:null,1105:null,1106:null,
+            1200:null,1201:null,1202:null,1203:null,1204:null,1205:null,1206:null
         };
         
         // 駒のインスタンスを生成
         for (let pos in InitPlace) {
-            if (InitPlace[pos] >= global.rule.GOTE) {
-                var koma = InitPlace[pos] - global.rule.GOTE;
-                var position = pos;
-                var isSente = false;
-                var isOwn = (matchingData.gote == ownData.id) ? true: false;
-                var isHold = (position > 1000) ? true : false;
-                var isEvolve = false;
+
+            // 先手駒
+            if(GlobalFunc.isSente(InitPlace[pos])){
+                let koma = (InitPlace[pos] != null) ? InitPlace[pos] - GlobalVar.SENTE : null;
+                let position = pos;
+                let isSente = true;
+                let isOwn = (matchingData.sente == ownData.id) ? true: false;
+                let isHold = false;
+                let isEvolve = false;
                 this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 後手駒
+            }else if(GlobalFunc.isGote(InitPlace[pos])){
+                let koma = (InitPlace[pos] != null) ? InitPlace[pos] - GlobalVar.GOTE : null;
+                let position = pos;
+                let isSente = false;
+                let isOwn = (matchingData.gote == ownData.id) ? true: false;
+                let isHold = false;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 先手持ち駒
+            }else if(GlobalFunc.isSenteHold(pos)){
+                let koma = InitPlace[pos];
+                let position = pos;
+                let isSente = true;
+                let isOwn = (matchingData.sente == ownData.id) ? true: false;
+                let isHold = true;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 後手持ち駒
+            }else if(GlobalFunc.isGoteHold(pos)){
+                let koma = InitPlace[pos];
+                let position = pos;
+                let isSente = false;
+                let isOwn = (matchingData.gote == ownData.id) ? true: false;
+                let isHold = true;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 駒のないマス
             }else{
-                var koma = InitPlace[pos] - global.rule.SENTE;
-                var position = pos;
-                var isSente = true;
-                var isOwn = (matchingData.sente == ownData.id) ? true: false;
-                var isHold = (position > 1000) ? true : false;
-                var isEvolve = false;
-                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+                this[pos] = new Piece(null,pos);
+
             }
         };
-
         this.showMoveArea(this);
-        //this.extractLegalArea(this.showMoveArea(this));
     }
 
     // 盤面の更新
@@ -80,8 +107,6 @@ class Board {
 
     // 移動可能範囲生成
     showMoveArea(board){
-        let common = require('../common');
-        let global = require('../global');
 
         // 2歩判定用
         let checkNihuSuji = [];
@@ -100,16 +125,16 @@ class Board {
             }else{
                 let result = [];
                 switch( board[piece].koma ) {
-                    case global.rule.HU:
-                        if(common.is_empty(moveArea_hu)){
+                    case GlobalVar.HU:
+                        if(is_empty(moveArea_hu)){
                             for(let i = 11; i <= 99; i++) {
-                                if((!global.rule.Guardian.includes(i)) && !board[i] && !checkNihuSuji.includes(Math.floor(i / 10) * 10)) {
+                                if((!in_array(i,GlobalVar.Guardian)) && !board[i] && !in_array(Math.floor(i / 10) * 10,checkNihuSuji)) {
                                     if(board[piece].isSente) {
-                                        if(!global.rule.Dan_1st.includes(i)) {
+                                        if(!in_array(i,GlobalVar.Dan_1st)) {
                                             result.push(i);
                                         }
                                     }else{
-                                        if(!global.rule.Dan_9th.includes(i)) {
+                                        if(!in_array(i,GlobalVar.Dan_9th)) {
                                             result.push(i);
                                         }
                                     }
@@ -121,16 +146,16 @@ class Board {
                         }
                         break;
                     
-                    case global.rule.KY:
-                        if(common.is_empty(moveArea_ky)){
+                    case GlobalVar.KY:
+                        if(is_empty(moveArea_ky)){
                             for(let i = 11; i <= 99; i++) {
-                                if((!global.rule.Guardian.includes(i)) && !board[i]) {
+                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
                                     if(board[piece].isSente) {
-                                        if(global.rule.Dan_1st.indexOf(i) < 0) {
+                                        if(!in_array(i,GlobalVar.Dan_1st)) {
                                             result.push(i);
                                         }
                                     }else{
-                                        if(!global.rule.Dan_9th.includes(i)) {
+                                        if(!in_array(i,GlobalVar.Dan_9th)) {
                                             result.push(i);
                                         }
                                     }
@@ -142,16 +167,16 @@ class Board {
                         }
                         break;
                     
-                    case global.rule.KE:
-                        if(common.is_empty(moveArea_ke)){
+                    case GlobalVar.KE:
+                        if(is_empty(moveArea_ke)){
                             for(let i = 11; i <= 99; i++) {
-                                if((!global.rule.Guardian.includes(i)) && !board[i]) {
+                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
                                     if(board[piece].isSente) {
-                                        if(!global.rule.Dan_1st.includes(i) && !global.rule.Dan_2nd.includes(i)) {
+                                        if(!in_array(i,GlobalVar.Dan_1st) && !in_array(i,GlobalVar.Dan_2nd)) {
                                             result.push(i);
                                         }
                                     }else{
-                                        if(!global.rule.Dan_9th.includes(i) && !global.rule.Dan_8th.includes(i)) {
+                                        if(!in_array(i,GlobalVar.Dan_9th) && !in_array(i,GlobalVar.Dan_8th)) {
                                             result.push(i);
                                         }
                                     }
@@ -164,9 +189,9 @@ class Board {
                         break;
         
                     default:
-                        if(common.is_empty(moveArea_other)){                        
+                        if(is_empty(moveArea_other)){                        
                             for(let i = 11; i <= 99; i++) {
-                                if((!global.rule.Guardian.includes(i)) && !board[i]) {
+                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
                                     result.push(i);
                                 }
                             }
@@ -186,7 +211,7 @@ class Board {
     extractLegalArea(board){
 
         let Piece = require('./piece');
-        let common = require('../common');
+        let common = require('../commonFunc');
         let global = require('../global');
 
         // 一時的に上書き用のクラスを作る

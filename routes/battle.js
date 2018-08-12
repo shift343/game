@@ -1,10 +1,17 @@
 const express = require('express');
 const router  = express.Router();
 
-// モジュール読み込み
-const global = require('../global');
-const common = require('../common');
 const Board    = require('../library/board');
+
+let matching = {
+  sente:15,
+  gote:20
+}
+let own = {
+  id:15
+}
+let board = new Board(own,matching,null,null);
+console.log(board);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
