@@ -1,0 +1,36 @@
+
+<div class="curtain">
+    <div class="curtain__wrapper">
+        <input id="checkbox" type="checkbox" checked disabled>
+        <div class="curtain__panel curtain__panel--left">
+            <img src="/images/parts/door_left2.png" width="100%">
+            <p>
+                <%=matchingInfo.sente.name%>
+            </p>
+        </div>
+        <div class="curtain__panel curtain__panel--right">
+            <img src="/images/parts/door_right2.png" width="100%">
+            <p>
+                <%=matchingInfo.gote.name%>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    setTimeout(function(){
+        $('#checkbox').prop('checked',false);
+    },2000);
+    setTimeout(function(){
+        $('.curtain').css('z-index',-1);
+    },2500);
+
+    // setTimeout(function(){
+    //     $('.curtain').css('z-index',1);
+    // },5000);
+    // setTimeout(function(){
+    //     $('#checkbox').prop('checked',true);
+    // },5000);
+});
+</script>

@@ -1,0 +1,99 @@
+.curtain { 
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    
+    &__wrapper {
+        width: 100%;
+        height: 100%;
+          
+        input[type=checkbox] {
+        position: absolute;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        
+        // When the checkbox is checked...
+        &:checked {
+            
+            // Slide the first panel
+            &~div.curtain__panel--left {
+            transform: translateX(0);
+            }
+            
+            // Slide the second panel
+            &~div.curtain__panel--right {
+            transform: translateX(0);
+            }
+        }
+        }
+
+    }
+    
+    &__panel {
+        display: flex;
+        align-items: center;
+        background-color: rgb(73, 56, 48);
+        color: #fff;
+        float: left;
+        position: relative;
+        width: 50%;
+        height: 100%;
+        transition: all 0.5s ease-out;
+        z-index: 2;
+        &--left {
+        justify-content: flex-end;
+        transform: translateX(-100%);
+            p{
+                position:absolute;
+                bottom:10%;
+                left:10%;
+            }
+        }
+        &--right {
+        justify-content: flex-start;
+        transform: translateX(100%);
+            p{
+                position:absolute;
+                bottom:10%;
+                left:10%;
+            }
+        }
+    }
+    
+    &__content {
+        color: #fff;
+        position: absolute;
+        text-align: center;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        
+        img {
+        width: 100%;
+        height: 100%;
+        }
+
+        #battle{
+        background-color: rgb(172, 115, 89);
+        width: 100%;
+        height: 100%;
+        display: block;
+        }
+
+        #view{
+        background-color: rgb(108, 172, 89);
+        width: 100%;
+        height: 100%;
+        display: none;
+        }
+
+    }
+    
+}
