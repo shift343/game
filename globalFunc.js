@@ -17,7 +17,7 @@ global.GlobalFunc = {
     },
     // 駒があるマスかどうか
     isPiece : (piece) => {
-        return piece.isOwn != undefined ? true : false;
+        return piece.koma != null ? true : false;
     }
 
 }

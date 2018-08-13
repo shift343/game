@@ -1,22 +1,22 @@
 const express = require('express');
 const router  = express.Router();
 
-const Board    = require('../library/board');
+const Board   = require('../library/board');
 
-let matching = {
-  sente:15,
-  gote:20
-}
-let own = {
-  id:15
-}
-let board = new Board(own,matching,null,null);
-console.log(board);
+// let matching = {
+//   sente:15,
+//   gote:20
+// }
+// let own = {
+//   id:15
+// }
+// let board = new Board(own,matching,null,null);
+// console.log(board);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  let board = new Board(req.session.own,req.session.matching,null,null);
+  let board = GlobalVar.InitPlace;
 
   res.render('battle',{
     own:req.session.own, //ユーザー情報

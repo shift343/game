@@ -1,54 +1,60 @@
 class Board {
 
-    constructor(board,isConvert){
-        if(isConvert){
-            this.convertBoard(board);
-        } else {
-            this.reCreateBoard(board);
-        }
+    // 盤面配列を渡すと盤面クラス生成
+    constructor(ownData,matchingData,board){
+        this.convertBoard(ownData,matchingData,board);
     }
 
     // 盤面生成
-    convertBoard(board){
-        
+    convertBoard(ownData,matchingData,board){
+
         // 駒のインスタンスを生成
         for (let pos in board) {
-            if(pos > game.HOLD) {
-                if (pos >= game.HOLD + game.GOTE) {
-                    var koma = board[pos];
-                    var position = pos;
-                    var isSente = false;
-                    var isOwn = (game.ownId == game.isGote) ? true : false;
-                    var isHold = true;
-                    var isEvolve = false;
-                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
-                }else{
-                    var koma = board[pos];
-                    var position = pos;
-                    var isSente = true;
-                    var isOwn = (game.ownId == game.isSente) ? true : false;
-                    var isHold = true;
-                    var isEvolve = false;
-                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
-                }                
-            } else {
-                if (board[pos] >= game.GOTE) {
-                    var koma = board[pos] - game.GOTE;
-                    var position = pos;
-                    var isSente = false;
-                    var isOwn = (game.ownId == game.isGote) ? true: false;
-                    var isHold = (position >= 1000) ? true : false;
-                    var isEvolve = false;
-                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
-                }else{
-                    var koma = board[pos] - game.SENTE;
-                    var position = pos;
-                    var isSente = true;
-                    var isOwn = (game.ownId == game.isSente) ? true: false;
-                    var isHold = (position >= 1000) ? true : false;
-                    var isEvolve = false;
-                    this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
-                }
+
+            // 先手駒
+            if(GlobalFunc.isSente(InitPlace[pos])){
+                let koma = InitPlace[pos] - GlobalVar.SENTE;
+                let position = pos;
+                let isSente = true;
+                let isOwn = (matchingData.sente == ownData.id) ? true: false;
+                let isHold = false;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 後手駒
+            }else if(GlobalFunc.isGote(InitPlace[pos])){
+                let koma = InitPlace[pos] - GlobalVar.GOTE;
+                let position = pos;
+                let isSente = false;
+                let isOwn = (matchingData.gote == ownData.id) ? true: false;
+                let isHold = false;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 先手持ち駒
+            }else if(GlobalFunc.isSenteHold(pos)){
+                let koma = InitPlace[pos];
+                let position = pos;
+                let isSente = true;
+                let isOwn = (matchingData.sente == ownData.id) ? true: false;
+                let isHold = true;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 後手持ち駒
+            }else if(GlobalFunc.isGoteHold(pos)){
+                let koma = InitPlace[pos];
+                let position = pos;
+                let isSente = false;
+                let isOwn = (matchingData.gote == ownData.id) ? true: false;
+                let isHold = true;
+                let isEvolve = false;
+                this[pos] = new Piece(koma,position,isSente,isOwn,isHold,isEvolve);
+
+            // 駒のないマス
+            }else{
+                this[pos] = new Piece(null,pos,false,false,false,false);
+
             }
         };
     }

@@ -52,3 +52,7 @@ module.exports = global.var_dump = (_var) => {
 module.exports = global.in_array = (_var,_arr) => {
     return (_arr.includes(_var)) ? true : false;
 }
+
+module.exports = global.is_null = (_var) => {
+    return _var == null ? true : false;
+}

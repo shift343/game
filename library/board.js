@@ -19,16 +19,16 @@ class Board {
             97:100, 87:100, 77:100, 67:100, 57:100, 47:100, 37:100, 27:100, 17:100,
             98:null,88:105, 78:null,68:null,58:null,48:null,38:null,28:106, 18:null,
             99:101, 89:102, 79:103, 69:104, 59:107, 49:104, 39:103, 29:102, 19:101,
-            1100:null,1101:null,1102:null,1103:null,1104:null,1105:null,1106:null,
-            1200:null,1201:null,1202:null,1203:null,1204:null,1205:null,1206:null
+            1100:0,1101:0,1102:0,1103:0,1104:0,1105:0,1106:0,
+            1200:0,1201:0,1202:0,1203:0,1204:0,1205:0,1206:0
         };
-        
+    
         // 駒のインスタンスを生成
         for (let pos in InitPlace) {
 
             // 先手駒
             if(GlobalFunc.isSente(InitPlace[pos])){
-                let koma = (InitPlace[pos] != null) ? InitPlace[pos] - GlobalVar.SENTE : null;
+                let koma = InitPlace[pos] - GlobalVar.SENTE;
                 let position = pos;
                 let isSente = true;
                 let isOwn = (matchingData.sente == ownData.id) ? true: false;
@@ -38,7 +38,7 @@ class Board {
 
             // 後手駒
             }else if(GlobalFunc.isGote(InitPlace[pos])){
-                let koma = (InitPlace[pos] != null) ? InitPlace[pos] - GlobalVar.GOTE : null;
+                let koma = InitPlace[pos] - GlobalVar.GOTE;
                 let position = pos;
                 let isSente = false;
                 let isOwn = (matchingData.gote == ownData.id) ? true: false;
@@ -68,11 +68,11 @@ class Board {
 
             // 駒のないマス
             }else{
-                this[pos] = new Piece(null,pos);
+                this[pos] = new Piece(null,pos,false,false,false,false);
 
             }
         };
-        this.showMoveArea(this);
+        //this.showMoveArea(this);
     }
 
     // 盤面の更新
@@ -107,102 +107,8 @@ class Board {
 
     // 移動可能範囲生成
     showMoveArea(board){
-
-        // 2歩判定用
-        let checkNihuSuji = [];
         for (let piece in board) {
-            if(board[piece].isOwn && board[piece].isHu){
-                checkNihuSuji.push(Math.floor(board[piece].position / 10) * 10);
-            }
-        }
-
-        // 移動範囲算出の再利用
-        let moveArea_hu, moveArea_ky, moveArea_ke, moveArea_other;
-
-        for (let piece in board) {
-            if(!board[piece].isHold){
-                piece = board[piece].setMoveArea(board);
-            }else{
-                let result = [];
-                switch( board[piece].koma ) {
-                    case GlobalVar.HU:
-                        if(is_empty(moveArea_hu)){
-                            for(let i = 11; i <= 99; i++) {
-                                if((!in_array(i,GlobalVar.Guardian)) && !board[i] && !in_array(Math.floor(i / 10) * 10,checkNihuSuji)) {
-                                    if(board[piece].isSente) {
-                                        if(!in_array(i,GlobalVar.Dan_1st)) {
-                                            result.push(i);
-                                        }
-                                    }else{
-                                        if(!in_array(i,GlobalVar.Dan_9th)) {
-                                            result.push(i);
-                                        }
-                                    }
-                                }
-                            }
-                            moveArea_hu = result;
-                        } else {
-                            result = moveArea_hu;
-                        }
-                        break;
-                    
-                    case GlobalVar.KY:
-                        if(is_empty(moveArea_ky)){
-                            for(let i = 11; i <= 99; i++) {
-                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
-                                    if(board[piece].isSente) {
-                                        if(!in_array(i,GlobalVar.Dan_1st)) {
-                                            result.push(i);
-                                        }
-                                    }else{
-                                        if(!in_array(i,GlobalVar.Dan_9th)) {
-                                            result.push(i);
-                                        }
-                                    }
-                                }
-                            }
-                            moveArea_ky = result;
-                        } else {
-                            result = moveArea_ky;
-                        }
-                        break;
-                    
-                    case GlobalVar.KE:
-                        if(is_empty(moveArea_ke)){
-                            for(let i = 11; i <= 99; i++) {
-                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
-                                    if(board[piece].isSente) {
-                                        if(!in_array(i,GlobalVar.Dan_1st) && !in_array(i,GlobalVar.Dan_2nd)) {
-                                            result.push(i);
-                                        }
-                                    }else{
-                                        if(!in_array(i,GlobalVar.Dan_9th) && !in_array(i,GlobalVar.Dan_8th)) {
-                                            result.push(i);
-                                        }
-                                    }
-                                }
-                            }
-                            moveArea_ke = result;
-                        } else {
-                            result = moveArea_ke;
-                        }
-                        break;
-        
-                    default:
-                        if(is_empty(moveArea_other)){                        
-                            for(let i = 11; i <= 99; i++) {
-                                if((!in_array(i,GlobalVar.Guardian)) && !board[i]) {
-                                    result.push(i);
-                                }
-                            }
-                            moveArea_other = result;
-                        } else {
-                            result = moveArea_other;
-                        }
-                        break;
-                }
-                board[piece].moveArea = result;            
-            }
+            piece = !board[piece].isHold ? board[piece].setMoveArea(board) : !is_empty(board[piece].koma) ? board[piece].setShotArea(board):piece;
         }
         return board;
     }
