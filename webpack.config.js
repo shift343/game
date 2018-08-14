@@ -3,21 +3,30 @@ var path = require('path'),
 
 module.exports = [{
     mode: "development",
-    context: path.join(__dirname, 'public/sass'),
-    entry: {
-        style: './app.scss'
-    },
+    entry: './assets/index.js',
     output: {
-        path: path.join(__dirname, 'public/stylesheets'),
-        filename: '[name].css'
+        path: path.join(__dirname, './public/javascripts/'),
+        filename: 'bundle.js'
     },
     module: {
-        rules: [
-            {
-                test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('css-loader?-url&minimize&sourceMap!sass-loader')
-            }
-        ]
+      rules: [
+        {
+          test: /\.js[x]?$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          query: {
+            presets: ['es2015']
+          }
+        },
+        {
+          test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
+          loader: "file-loader?name=images/[name].[ext]"
+        },
+        {
+          test: /\.scss$/,
+          loader: ExtractTextPlugin.extract('css-loader?-url&minimize&sourceMap!sass-loader'),
+        },
+      ]
     },
     devtool: 'source-map',
     plugins: [
