@@ -1,0 +1,168 @@
+<%- include('../common/header') %>
+<div id="battle_page"><%- include('./board.ejs')%></div>
+<%- include('../common/footer') %>
+
+<script src='/socket.io/socket.io.js'></script>
+<script>
+// socket通信開始
+var socket = io('/battle');
+
+// 初期データ埋め込み
+var boardInfo = <%- JSON.stringify(boardInfo) %>;
+var matchingInfo = <%- JSON.stringify(matchingInfo) %>;
+var own = <%- JSON.stringify(own) %>
+var game  = new Game(matchingInfo,own);
+var board = new Board(boardInfo,game);
+
+// 部屋に入室
+this.socket.emit("joinBattle", game.roomId);
+
+var app = new Vue({
+    el: '#shogi',
+    data: {
+        game: game,
+        board: board,
+        selected: null,
+        moved: null,
+        moveFrom: null,
+        moveTo: null,
+        teban: game.ownId == game.sente ? true : false,
+
+    },
+    methods: {
+        onSelect: function(event){
+            if(this.selected == event.currentTarget) this.selected = null;
+            this.selected = event.currentTarget;
+        },
+        hide_MoveArea: function(){
+            for (square in this.board) {
+                if(this.board[square].isHold) continue;
+                var element = document.getElementById(this.board[square].position);
+                element.firstElementChild.classList.remove("blackOut");
+            }
+        },
+        show_MoveArea: function(target_id){
+            var targetElement;
+            for (square in this.board) {
+                if(this.board[square].isHold) continue;
+                var element = document.getElementById(this.board[square].position);
+                element.firstElementChild.classList.add("blackOut");
+                if(this.board[square].position == target_id){
+                    targetElement = this.board[square];
+                }
+            }
+            for (area in targetElement.moveArea) {
+                var element = document.getElementById(targetElement.moveArea[area]);
+                element.firstElementChild.classList.remove("blackOut");
+            }
+            document.getElementById(targetElement.position).firstElementChild.classList.remove("blackOut");
+        },
+        show_Evolve: function(){
+            if(!this.board[this.moveFrom].isOu && !this.board[this.moveFrom].isKi && !this.board[this.moveFrom].isEvolve && !this.board[this.moveFrom].isHold){
+                if((this.board[this.moveFrom].isSente && (in_array(this.moveFrom,GlobalVar.Sente_area) || in_array(this.moveTo,GlobalVar.Sente_area))) || (!this.board[this.moveFrom].isSente && (in_array(this.moveFrom,GlobalVar.Gote_area) || in_array(this.moveTo,GlobalVar.Gote_area)))){
+                    if(!confirm('成りますか？')){
+                    }else{
+                        return true;
+                    }
+                }
+            }
+        },
+    },
+    computed: {
+        convertBoard: function(){
+            var result = {};
+            for (var piece in this.board) {
+                if(is_null(this.board[piece].koma)){
+                    result[piece] = null;
+                }else if(piece > GlobalVar.HOLD){
+                    result[piece] = this.board[piece].koma;
+                } else {
+                    if(this.board[piece].isSente) {
+                        result[piece] = this.board[piece].koma + 100;
+                    }else{
+                        result[piece] = this.board[piece].koma + 200;
+                    }
+                }
+            }
+            return result;
+        },
+    },
+    watch: {
+        selected: function(val,old) {
+            if(this.teban){
+                // 自駒をタップした時
+                if(val.dataset.own != undefined){
+                    // 選択済みかつ同じ駒だった場合
+                    if(val == old && !is_null(this.moveFrom)){
+                        this.moveFrom = null;
+                        this.moveTo = null;
+                    // 選択前の駒だった場合
+                    }else{
+                        this.moveFrom = val.id;
+                        this.moveTo = null;
+                    }
+                // 自駒以外をタップした時
+                }else{
+                    // 移動可能範囲だった場合
+                    if(!is_null(this.moveFrom) && in_array(val.id,this.board[this.moveFrom].moveArea)){
+                        this.moveTo = val.id;
+                        this.hide_MoveArea();
+                    // それ以外の場合
+                    }else{
+                        this.moveFrom = null;
+                        this.moveTo = null;
+                    }
+                }
+            }
+        },
+        moveFrom: function(val,old){
+            if(is_null(val)){
+                this.hide_MoveArea();
+            }else{
+                this.show_MoveArea(val);
+            }
+        },
+        moveTo: function(val,old){
+            this.moved = val;
+        },
+        moved: function(val,old){
+            if(val != null){
+
+                // 駒成の判定
+                var setEvolve = this.show_Evolve(val) ? true : false;
+
+                // オブジェクトを配列に変換
+                var boardArr = this.convertBoard;
+
+                // 送る情報を詰める
+                let socketInfo = {
+                  roomId: game.roomId,
+                  board: boardArr,
+                  fromPos: this.moveFrom,
+                  toPos: this.moveTo,
+                  isEvolve: setEvolve
+                }
+
+                // サーバーに送信
+                socket.emit("moveKoma", socketInfo);
+
+                this.moveFrom = null;
+                this.moveTo = null;
+                this.teban = false;
+            }
+        }
+    }
+});
+// 盤面更新
+this.socket.on("updateBoard", function (data) {
+    app.$data.board = new Board(data.board,app.$data.game);
+    app.$data.teban = data.teban;
+
+    // this.test = new Board(data.board,game);
+    // 相手視点のみ移動範囲を生成
+    //   if(!data.isOwn) {
+    //     board.extractLegalArea(board.showMoveArea(board));
+    //   }
+});
+
+</script>

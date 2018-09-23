@@ -6,7 +6,7 @@ module.exports = [{
     entry: './assets/index.js',
     output: {
         path: path.join(__dirname, './public/javascripts/'),
-        filename: 'bundle.js'
+        filename: 'main.js'
     },
     module: {
       rules: [
@@ -30,6 +30,8 @@ module.exports = [{
     },
     devtool: 'source-map',
     plugins: [
-        new ExtractTextPlugin('[name].css')
+        new ExtractTextPlugin({
+            filename: '../stylesheets/main.css'
+        })
     ]
 }];

@@ -1,0 +1,133 @@
+html {
+  height: 100%; }
+  html body {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto; }
+    html body ul {
+      margin: 0;
+      padding: 0; }
+
+#menu {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #493830;
+  width: 30%;
+  height: 30%;
+  z-index: 1000;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  list-style: none;
+  display: flex; }
+
+#battle_page #shogi {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: auto; }
+  #battle_page #shogi .top, #battle_page #shogi .bottom {
+    width: 100%;
+    height: 52px;
+    display: flex;
+    margin: auto;
+    box-sizing: border-box;
+    border: 1px solid black;
+    background-image: url("../images/parts/cherry_back_top.png");
+    background-size: cover; }
+  #battle_page #shogi .board {
+    margin: auto;
+    box-sizing: border-box;
+    border: 1px solid black;
+    width: 100%;
+    height: 100%;
+    margin: auto auto;
+    font-size: 0px;
+    position: relative; }
+    #battle_page #shogi .board .sente, #battle_page #shogi .board .gote {
+      top: 2%;
+      left: 2%;
+      width: 96%;
+      height: 96%;
+      position: absolute;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+      background-image: url("../images/parts/bg_wood_rate.png");
+      background-repeat: no-repeat;
+      background-size: 100%;
+      border-left: 1px solid #60392d;
+      border-bottom: 1px solid #60392d; }
+      #battle_page #shogi .board .sente .square, #battle_page #shogi .board .gote .square {
+        width: calc(100% / 9);
+        height: calc(100% / 9);
+        display: inline-block;
+        color: black;
+        font-size: 2px;
+        text-align: center;
+        position: relative;
+        border-top: 1px solid #60392d;
+        border-right: 1px solid #60392d;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box; }
+  #battle_page #shogi .selection {
+    width: calc(100% / 9);
+    height: calc(100% / 9);
+    background-color: black;
+    opacity: 0.4; }
+  #battle_page #shogi .blackOut {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.2;
+    position: absolute; }
+  #battle_page #shogi .onTap {
+    animation: bg-color 2s infinite;
+    -webkit-animation: bg-color 2s infinite;
+    /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */ }
+
+@-webkit-keyframes bg-color {
+  0% {
+    background: rgba(255, 255, 0, 0.3); }
+  50% {
+    background: rgba(255, 255, 0, 0.7); }
+  100% {
+    background: rgba(255, 255, 0, 0.3); } }
+
+@keyframes bg-color {
+  0% {
+    background: rgba(255, 255, 0, 0.3); }
+  50% {
+    background: rgba(255, 255, 0, 0.8); }
+  100% {
+    background: rgba(255, 255, 0, 0.3); } }
+  #battle_page #shogi .onTaped {
+    animation: bg-color2 2s infinite;
+    -webkit-animation: bg-color2 2s infinite;
+    /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */ }
+
+@-webkit-keyframes bg-color2 {
+  0% {
+    background: rgba(85, 255, 51, 0.3); }
+  50% {
+    background: rgba(85, 255, 51, 0.5); }
+  100% {
+    background: rgba(85, 255, 51, 0.3); } }
+
+@keyframes bg-color2 {
+  0% {
+    background: rgba(85, 255, 51, 0.3); }
+  50% {
+    background: rgba(85, 255, 51, 0.5); }
+  100% {
+    background: rgba(85, 255, 51, 0.3); } }
+
+/*# sourceMappingURL=main.css.map*/

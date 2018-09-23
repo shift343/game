@@ -4,7 +4,7 @@ const playerInfo = require('../library/db/sql/player/player_info');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('matching',{
+  res.render('matching/index',{
     own:req.session.own //ユーザー情報
   });
 });
@@ -24,18 +24,12 @@ router.post('/', function(req, res, next) {
       matchingInfo.sente = value.sente;
       matchingInfo.gote  = value.gote;
     }
-
     req.session.matching = matchingInfo; //試合情報をsessionに詰める
     res.redirect('/battle');
   }).catch(function(error){
     console.log("マッチングに失敗しました");
     res.redirect('/');
   });
-  
-
-
-
 });
-
 
 module.exports = router;

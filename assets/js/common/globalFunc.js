@@ -1,0 +1,49 @@
+window.GlobalFunc = {
+    // 先手駒か
+    isSente : (koma) =>{
+        return (koma >= GlobalVar.SENTE && koma < GlobalVar.GOTE) ? true : false;
+    },
+    // 後手駒か
+    isGote : (koma) =>{
+        return (koma >= GlobalVar.GOTE && koma < GlobalVar.HOLD) ? true : false;
+    },
+    // 先手持ち駒か
+    isSenteHold : (pos) =>{
+        return (pos >= GlobalVar.HOLD + GlobalVar.SENTE && pos < GlobalVar.HOLD + GlobalVar.GOTE) ? true : false;
+    },
+    // 後手持ち駒か
+    isGoteHold : (pos) =>{
+        return (pos >= GlobalVar.HOLD + GlobalVar.GOTE) ? true : false;
+    },
+    // 駒があるマスかどうか
+    isPiece : (piece) => {
+        return piece.koma != null ? true : false;
+    },
+
+    // 駒が成る
+    MakeEvolve : (koma) => {
+        return GlobalVar.EVOLVE[koma];
+    },
+
+    // 駒を取る
+    TakeKoma : function (board,moveTo) {
+        let koma = GlobalVar.REVERSE[board[moveTo]];
+        let key = koma + this.HOLD;
+        board[key]++;
+        return board;
+    },
+
+    // 盤面を更新する
+    UpdateBoard : function (board,koma,moveFrom,moveTo,isEvolve) {
+        if(isEvolve) {
+            koma = MakeEvolve(koma);
+        }
+        if(board[moveTo]) {
+            board = TakeKoma(board,moveTo);
+        }
+        board[moveFrom] = null;
+        board[moveTo] = koma;
+        return board;
+    },
+
+}

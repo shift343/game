@@ -1,27 +1,15 @@
 const express = require('express');
 const router  = express.Router();
 
-const Board   = require('../library/board');
-
-// let matching = {
-//   sente:15,
-//   gote:20
-// }
-// let own = {
-//   id:15
-// }
-// let board = new Board(own,matching,null,null);
-// console.log(board);
+// board情報を送る
+const board = GlobalVar.InitPlace;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
-  let board = GlobalVar.InitPlace;
-
-  res.render('battle',{
-    own:req.session.own, //ユーザー情報
-    matchingInfo:req.session.matching, //対局情報
-    boardInfo:board //盤面情報
+  res.render('battle/index',{
+    boardInfo:board, //盤面情報
+    matchingInfo:req.session.matching, //マッチング情報
+    own:req.session.own //ユーザー情報
   });
 });
 

@@ -66,7 +66,7 @@ let Rule = {
         if(board[moveTo]) {
             board = this.HoldKoma(board,moveTo);
         }
-        delete board[moveFrom];
+        board[moveFrom] = null;
         board[moveTo] = koma;
         return board;
     }

@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 require('./commonFunc'); //汎用的に使うグローバル関数
-require('./globalVar');  //将棋関連を定義したグローバル変数
+require('./globalVar'); //将棋関連を定義したグローバル変数
 require('./globalFunc'); //将棋関連を定義したグローバル関数
 
 var indexRouter = require('./routes/index'); //タイトル用
@@ -15,6 +15,7 @@ var loginRouter = require('./routes/login'); //ログイン用
 var usersRouter = require('./routes/users');
 var battleRouter = require('./routes/battle');
 var matchingRouter = require('./routes/matching');
+var debugRouter = require('./routes/debug'); // 動作テスト用
 
 var session = require('express-session');
 
@@ -55,6 +56,7 @@ app.use('/top', topRouter);
 app.use('/users', usersRouter);
 app.use('/battle', battleRouter);
 app.use('/matching', matchingRouter);
+app.use('/debug', debugRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

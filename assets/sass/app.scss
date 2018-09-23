@@ -1,10 +1,16 @@
 // 共通用
-@import "./common.scss";
+@import "./common/common.scss";
 
-@import "./menu.scss";
+@import "./layouts/menu.scss";
 
 // トップページ用
-@import "./top.scss";
+@import "./layouts/top.scss";
+
+// 将棋盤
+@import "./layouts/board.scss";
+
 
 // 対局ドア用
-@import "./curtain.scss";
+// @import "./curtain.scss";
+
+// test用

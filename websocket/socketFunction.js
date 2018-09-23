@@ -81,31 +81,28 @@ battle.on("connection", function (socket) {
     let moveTo     = data.toPos;      // 移動先
     let koma       = board[moveFrom]; // 駒情報
     let isEvolve   = data.isEvolve;   // 駒成か
-    let isHold     = board[moveTo] ? true : false; // 駒取か
 
     // 盤面の更新
-    board = global.rule.UpdateBoard(board,koma,moveFrom,moveTo,isEvolve);
+    board = GlobalFunc.UpdateBoard(board,koma,moveFrom,moveTo,isEvolve);
 
     // 自分に送る情報をまとめる
     ownData = {
-      board:board,
-      koma:koma,
-      moveFrom:moveFrom,
-      moveTo:moveTo,
-      isOwn:true,
-      teban:false,
-      isHold:isHold
+      board: board,
+      koma: koma,
+      moveFrom: moveFrom,
+      moveTo: moveTo,
+      teban: false,
+      isOwn: true
     }
 　
     // 相手に送る情報をまとめる
     enemyData = {
-      board:board,
-      koma:koma,
-      moveFrom:moveFrom,
-      moveTo:moveTo,
-      isOwn:false,
-      teban:true,
-      isHold:isHold
+      board: board,
+      koma: koma,
+      moveFrom: moveFrom,
+      moveTo: moveTo,
+      teban: true,
+      isOwn: false
     }
 
     // 盤面情報を送る
