@@ -155,14 +155,14 @@ var app = new Vue({
 });
 // 盤面更新
 this.socket.on("updateBoard", function (data) {
-    app.$data.board = new Board(data.board,app.$data.game);
+    let newBoard = new Board(data.board,app.$data.game);
+    // 手番のみ合法手を生成
+    if(!data.isOwn) {
+        newBoard.extractLegalArea(newBoard,game);
+        console.log(newBoard);
+    }
+    app.$data.board = newBoard;
     app.$data.teban = data.teban;
-
-    // this.test = new Board(data.board,game);
-    // 相手視点のみ移動範囲を生成
-    //   if(!data.isOwn) {
-    //     board.extractLegalArea(board.showMoveArea(board));
-    //   }
 });
 
 </script>

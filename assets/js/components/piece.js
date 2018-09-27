@@ -1,12 +1,11 @@
 export default class Piece {
     constructor(koma,position,isSente,isOwn,isHold,isEvolve){
-
         this.koma     = koma;
         this.position = parseInt(position);
         this.isSente  = isSente;
         this.isOwn    = isOwn;
-        this.isHold   = isHold;
         this.isEvolve = isEvolve;
+        this.isHold   = isHold;
         this.isHu     = isHold ? false : koma == GlobalVar.HU ? true  : false;
         this.isKy     = isHold ? false : koma == GlobalVar.KY ? true  : false;
         this.isKe     = isHold ? false : koma == GlobalVar.KE ? true  : false;
@@ -23,6 +22,27 @@ export default class Piece {
         this.isNhi    = isHold ? false : koma == GlobalVar.NHI ? true : false;
         this.moveArea = [];
         this.komaImg = is_null(this.koma) ? null : this.setKomaImg();
+        if(this.isHold) this.setHold();
+    }
+
+    setHold(){
+        let koma = this.isSente ? (this.position - (GlobalVar.HOLD + GlobalVar.SENTE)) : (this.position - (GlobalVar.HOLD + GlobalVar.GOTE));
+        switch(koma){
+            case 0  : this.isHu = true; break;
+            case 1  : this.isKy = true; break;
+            case 2  : this.isKe = true; break;
+            case 3  : this.isGi = true; break;
+            case 4  : this.isKi = true; break;
+            case 5  : this.isKa = true; break;
+            case 6  : this.isHi = true; break;
+            case 7  : this.isOu = true; break;
+            case 8  : this.isNhu = true; break;
+            case 9  : this.isNky = true; break;
+            case 10 : this.isNke = true; break;
+            case 11 : this.isNgi = true; break;
+            case 12 : this.isNka = true; break;
+            case 13 : this.isNhi = true; break;
+        }
     }
 
     setKomaImg(){
@@ -211,7 +231,7 @@ export default class Piece {
 
                 for(let i = 11; i <= 99; i++) {
                     if((!in_array(i,GlobalVar.Guardian)) && is_null(board[i].koma) && !in_array(Math.floor(i / 10) * 10,checkNihuSuji)) {
-                        if(board[piece].isSente) {
+                        if(this.isSente) {
                             if(!in_array(i,GlobalVar.Dan_1st)) {
                                 result.push(i);
                             }
@@ -227,7 +247,7 @@ export default class Piece {
             case GlobalVar.KY:
                 for(let i = 11; i <= 99; i++) {
                     if((!in_array(i,GlobalVar.Guardian)) && is_null(board[i].koma)) {
-                        if(board[piece].isSente) {
+                        if(this.isSente) {
                             if(!in_array(i,GlobalVar.Dan_1st)) {
                                 result.push(i);
                             }
@@ -243,7 +263,7 @@ export default class Piece {
             case GlobalVar.KE:
                 for(let i = 11; i <= 99; i++) {
                     if((!in_array(i,GlobalVar.Guardian)) && is_null(board[i].koma)) {
-                        if(board[piece].isSente) {
+                        if(this.isSente) {
                             if(!in_array(i,GlobalVar.Dan_1st) && !in_array(i,GlobalVar.Dan_2nd)) {
                                 result.push(i);
                             }
