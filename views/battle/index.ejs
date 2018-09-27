@@ -68,30 +68,11 @@ var app = new Vue({
             }
         },
     },
-    computed: {
-        convertBoard: function(){
-            var result = {};
-            for (var piece in this.board) {
-                if(is_null(this.board[piece].koma)){
-                    result[piece] = null;
-                }else if(piece > GlobalVar.HOLD){
-                    result[piece] = this.board[piece].koma;
-                } else {
-                    if(this.board[piece].isSente) {
-                        result[piece] = this.board[piece].koma + 100;
-                    }else{
-                        result[piece] = this.board[piece].koma + 200;
-                    }
-                }
-            }
-            return result;
-        },
-    },
     watch: {
         selected: function(val,old) {
             if(this.teban){
                 // 自駒をタップした時
-                if(val.dataset.own != undefined){
+                if(this.board[val.id].isOwn){
                     // 選択済みかつ同じ駒だった場合
                     if(val == old && !is_null(this.moveFrom)){
                         this.moveFrom = null;
@@ -132,7 +113,7 @@ var app = new Vue({
                 var setEvolve = this.show_Evolve(val) ? true : false;
 
                 // オブジェクトを配列に変換
-                var boardArr = this.convertBoard;
+                var boardArr = this.board.convertBoard(this.board);
 
                 // 送る情報を詰める
                 let socketInfo = {
@@ -159,7 +140,6 @@ this.socket.on("updateBoard", function (data) {
     // 手番のみ合法手を生成
     if(!data.isOwn) {
         newBoard.extractLegalArea(newBoard,game);
-        console.log(newBoard);
     }
     app.$data.board = newBoard;
     app.$data.teban = data.teban;
