@@ -93,7 +93,7 @@ battle.on("connection", function (socket) {
       moveTo: moveTo,
       teban: false,
       isOwn: true
-    }
+    } 
 　
     // 相手に送る情報をまとめる
     enemyData = {
