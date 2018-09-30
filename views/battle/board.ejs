@@ -1,14 +1,22 @@
 <div id="shogi">
   <div class="top">
-    <div v-if="game.isSente" class="sente">
-      <% for (var i = 1100; i <= 1106; i=i+1) { %>
-        <div v-on:click="onSelect($event)" class="square" id="<%= i %>">
+    <div v-if="game.isSente" class="gote">
+      <% for (var i = 1200; i <= 1206; i=i+1) { %>
+        <div v-on:click="onSelect($event)" class="square hold" id="<%= i %>">
           <div></div>
-          <img v-if="board[<%= i+j %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i+j %>].komaImg" height='100%'>
+          <img v-if="board[<%= i %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i %>].komaImg" height='100%'>
+          <span v-if="board[<%= i %>].komaImg">{{board[<%= i %>].koma}}</span>  
         </div>
       <% } %>
     </div>
-    <div v-if="game.isGote" class="gote">
+    <div v-if="game.isGote" class="sente">
+      <% for (var i = 1100; i <= 1106; i=i+1) { %>
+        <div v-on:click="onSelect($event)" class="square hold" id="<%= i %>">
+          <div></div>
+          <img v-if="board[<%= i %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i %>].komaImg" height='100%'>
+          <span v-if="board[<%= i %>].komaImg">{{board[<%= i %>].koma}}</span>  
+        </div>
+      <% } %>
     </div>
   </div>
   <div class="board">
@@ -16,7 +24,7 @@
     <div v-if="game.isSente" class="sente">
       <% for (var i = 1; i <= 9; i=i+1) { %>
         <% for (var j = 90; j >= 10; j=j-10) { %>
-          <div v-on:click="onSelect($event)" class="square" id="<%= i+j %>">
+          <div v-on:touchstart="onSelect($event)" class="square" id="<%= i+j %>">
             <div></div>
             <img v-if="board[<%= i+j %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i+j %>].komaImg" height='100%'>
           </div>
@@ -26,7 +34,7 @@
     <div v-if="game.isGote" class="gote">
       <% for (var i = 9; i >= 1; i=i-1) { %>
         <% for (var j = 10; j <= 90; j=j+10) { %>
-          <div v-on:click="onSelect($event)" class="square" id="<%= i+j %>">
+          <div v-on:touchstart="onSelect($event)" class="square" id="<%= i+j %>">
           <div></div>
           <img v-if="board[<%= i+j %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i+j %>].komaImg" height='100%'>            
           </div>
@@ -35,5 +43,23 @@
     </div>
   </div>
   <div class="bottom">
+    <div v-if="game.isSente" class="sente">
+      <% for (var i = 1100; i <= 1106; i=i+1) { %>
+        <div v-on:click="onSelect($event)" class="square hold" id="<%= i %>">
+          <div></div>
+          <img v-if="board[<%= i %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i %>].komaImg" height='100%'>
+          <span v-if="board[<%= i %>].komaImg">{{board[<%= i %>].koma}}</span>  
+        </div>
+      <% } %>
+    </div>
+    <div v-if="game.isGote" class="gote">
+      <% for (var i = 1200; i <= 1206; i=i+1) { %>
+        <div v-on:click="onSelect($event)" class="square hold" id="<%= i %>">
+          <div></div>
+          <img v-if="board[<%= i %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i %>].komaImg" height='100%'>
+          <span v-if="board[<%= i %>].komaImg">{{board[<%= i %>].koma}}</span>
+        </div>
+      <% } %>
+    </div>
   </div>
 </div>

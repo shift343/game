@@ -1,5 +1,5 @@
 <%- include('../common/header') %>
-<div id="battle_page"><%- include('./board.ejs')%></div>
+    <div id="battle_page"><%- include('./board.ejs')%></div>
 <%- include('../common/footer') %>
 
 <script src='/socket.io/socket.io.js'></script>
@@ -10,9 +10,10 @@ var socket = io('/battle');
 // 初期データ埋め込み
 var boardInfo = <%- JSON.stringify(boardInfo) %>;
 var matchingInfo = <%- JSON.stringify(matchingInfo) %>;
-var own = <%- JSON.stringify(own) %>
+var own = <%- JSON.stringify(own) %>;
 var game  = new Game(matchingInfo,own);
 var board = new Board(boardInfo,game);
+board.extractLegalArea(board,game);
 
 // 部屋に入室
 this.socket.emit("joinBattle", game.roomId);

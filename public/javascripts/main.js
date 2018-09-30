@@ -479,7 +479,7 @@ var Board = function () {
         key: "showMoveArea",
         value: function showMoveArea(board) {
             for (var piece in board) {
-                piece = !board[piece].isHold ? board[piece].setMoveArea(board) : !is_empty(board[piece].koma) ? board[piece].setShotArea(board) : piece;
+                piece = !board[piece].isHold ? board[piece].setMoveArea(board) : !is_null(board[piece].koma) ? board[piece].setShotArea(board) : piece;
             }
             return board;
         }
@@ -494,7 +494,7 @@ var Board = function () {
             var tempBoard = new Board(board.convertBoard(board), game);
 
             for (var piece in board) {
-                if (board[piece].isOwn) {
+                if (board[piece].isOwn && !board[piece].isHold) {
                     // 最終的な合法手
                     var extractLegalMoveArea = board[piece].moveArea;
                     // 移動元の駒を複製
@@ -510,8 +510,8 @@ var Board = function () {
                         // 移動元を初期化
                         tempBoard[board[piece].position] = new Piece(null, board[piece].position, false, false, false, false);
                         // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-                        var isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-                        if (isCheck) {
+                        var isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard));
+                        if (isCheck["isOwn"]) {
                             delete extractLegalMoveArea[movePos];
                         }
                         // 移動元を戻す
@@ -520,220 +520,57 @@ var Board = function () {
                         tempBoard[afterPiece.position] = reversePiece;
                     }
                     board[piece].moveArea = extractLegalMoveArea;
-                }
+                } else if (board[piece].isOwn && board[piece].isHold) {}
             }
         }
-
-        // // 移動可能範囲から合法手を生成
-        // extractLegalArea(board){
-
-        //     // 一時的に上書き用のクラスを作る
-        //     // let tempBoard = new Board(board,false);
-
-        //     for (let piece in board) {
-        //         if(board[piece].isOwn && !board[piece].isHold) {
-        //             // 最終的な合法手
-        //             let extractLegalMoveArea = board[piece].moveArea;
-        //             // 移動元の駒
-        //             let beforePiece = new Piece(board[piece].koma,board[piece].position,board[piece].isSente,true,board[piece].isHold,board[piece].isEvolve);
-
-        //             // 一手一手進めた駒で盤面を判断していく
-        //             for(let movePos in extractLegalMoveArea) {
-
-        //                 let reversePiece = null;
-        //                 let afterPiece  = new Piece(board[piece].koma,extractLegalMoveArea[movePos],board[piece].isSente,true,board[piece].isHold,board[piece].isEvolve);
-        //                 if(board[extractLegalMoveArea[movePos]] != undefined){
-        //                     reversePiece = board[extractLegalMoveArea[movePos]];
-        //                 }
-
-        //                 // 移動先を生成
-        //                 tempBoard[extractLegalMoveArea[movePos]] = afterPiece;
-        //                 // 移動元を削除
-        //                 delete tempBoard[piece];
-
-        //                 // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-        //                 let isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-        //                 if(isCheck){
-        //                     delete extractLegalMoveArea[movePos];
-        //                 }
-
-        //                 // 移動元を戻す
-        //                 tempBoard[beforePiece.position] = beforePiece;
-        //                 // 移動先削除 or 移動先に元々駒があった場合は巻き戻し
-        //                 if(reversePiece != null){
-        //                     tempBoard[afterPiece.position] = reversePiece;
-        //                 } else {
-        //                     delete tempBoard[afterPiece.position];
-        //                 }
-        //             }
-        //             board[piece].moveArea = extractLegalMoveArea;
-
-        //         } else if(board[piece].isOwn && board[piece].isHold) {
-
-        //             // 最終的な合法手
-        //             let extractLegalShotArea = board[piece].moveArea;
-        //             // 移動元の駒
-        //             let beforePiece = new Piece(board[piece].koma,board[piece].position,board[piece].isSente,true,board[piece].isHold,board[piece].isEvolve);
-
-        //             switch( board[piece].koma ) {
-        //                 case game.HU:
-        //                     if(is_empty(legalShotArea_hu)){
-
-        //                         // 一手一手進めた駒で盤面を判断していく
-        //                         for(let movePos in extractLegalShotArea) {
-
-        //                             let afterPiece  = new Piece(board[piece].koma,extractLegalShotArea[movePos],board[piece].isSente,true,false,false);
-
-        //                             // 移動先を生成
-        //                             tempBoard[extractLegalShotArea[movePos]] = afterPiece;
-        //                             // 移動元を削除
-        //                             delete tempBoard[piece];
-
-        //                             // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-        //                             let isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-        //                             if(isCheck){
-        //                                 delete extractLegalShotArea[movePos];
-        //                             }
-
-        //                             // 移動元を戻す
-        //                             tempBoard[beforePiece.position] = beforePiece;
-        //                             // 移動先削除 or 移動先に元々駒があった場合は巻き戻し
-        //                             delete tempBoard[afterPiece.position];
-        //                         }
-
-        //                         legalShotArea_hu = extractLegalShotArea;
-        //                     } else {
-        //                         extractLegalShotArea = legalShotArea_hu;
-        //                     }
-        //                     break;
-
-        //                 case game.KY:
-        //                     if(is_empty(legalShotArea_ky)){
-
-        //                         // 一手一手進めた駒で盤面を判断していく
-        //                         for(let movePos in extractLegalShotArea) {
-
-        //                             let afterPiece  = new Piece(board[piece].koma,extractLegalShotArea[movePos],board[piece].isSente,true,false,false);
-
-        //                             // 移動先を生成
-        //                             tempBoard[extractLegalShotArea[movePos]] = afterPiece;
-        //                             // 移動元を削除
-        //                             delete tempBoard[piece];
-
-        //                             // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-        //                             let isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-        //                             if(isCheck){
-        //                                 delete extractLegalShotArea[movePos];
-        //                             }
-
-        //                             // 移動元を戻す
-        //                             tempBoard[beforePiece.position] = beforePiece;
-        //                             // 移動先削除 or 移動先に元々駒があった場合は巻き戻し
-        //                             delete tempBoard[afterPiece.position];
-        //                         }
-
-        //                         legalShotArea_ky = extractLegalShotArea;
-        //                     } else {
-        //                         extractLegalShotArea = legalShotArea_ky;
-        //                     }
-        //                     break;
-
-        //                 case game.KE:
-        //                     if(is_empty(legalShotArea_ke)){
-
-        //                         // 一手一手進めた駒で盤面を判断していく
-        //                         for(let movePos in extractLegalShotArea) {
-
-        //                             let afterPiece  = new Piece(board[piece].koma,extractLegalShotArea[movePos],board[piece].isSente,true,false,false);
-
-        //                             // 移動先を生成
-        //                             tempBoard[extractLegalShotArea[movePos]] = afterPiece;
-        //                             // 移動元を削除
-        //                             delete tempBoard[piece];
-
-        //                             // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-        //                             let isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-        //                             if(isCheck){
-        //                                 delete extractLegalShotArea[movePos];
-        //                             }
-
-        //                             // 移動元を戻す
-        //                             tempBoard[beforePiece.position] = beforePiece;
-        //                             // 移動先削除 or 移動先に元々駒があった場合は巻き戻し
-        //                             delete tempBoard[afterPiece.position];
-        //                         }
-
-        //                         legalShotArea_ke = extractLegalShotArea;
-        //                     } else {
-        //                         extractLegalShotArea = legalShotArea_ke;
-        //                     }
-        //                     break;
-
-        //                 default:
-        //                     if(is_empty(legalShotArea_other)){
-
-        //                         // 一手一手進めた駒で盤面を判断していく
-        //                         for(let movePos in extractLegalShotArea) {
-
-        //                             let afterPiece  = new Piece(board[piece].koma,extractLegalShotArea[movePos],board[piece].isSente,true,false,false);
-
-        //                             // 移動先を生成
-        //                             tempBoard[extractLegalShotArea[movePos]] = afterPiece;
-        //                             // 移動元を削除
-        //                             delete tempBoard[piece];
-
-        //                             // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-        //                             let isCheck = tempBoard.getCheckStatus(tempBoard.showMoveArea(tempBoard));
-        //                             if(isCheck){
-        //                                 delete extractLegalShotArea[movePos];
-        //                             }
-
-        //                             // 移動元を戻す
-        //                             tempBoard[beforePiece.position] = beforePiece;
-        //                             // 移動先削除 or 移動先に元々駒があった場合は巻き戻し
-        //                             delete tempBoard[afterPiece.position];
-        //                         }
-
-        //                         legalShotArea_other = extractLegalShotArea;
-        //                     } else {
-        //                         extractLegalShotArea = legalShotArea_other;
-        //                     }
-        //                     break;
-        //             }
-        //             board[piece].moveArea = extractLegalShotArea; 
-
-        //         }
-        //     }
-        // }
 
         // 自王の位置を取得
 
     }, {
         key: "getKingPosition",
         value: function getKingPosition(board) {
-            var king = void 0;
+            var king = { "isOwn": null, "isEnemy": null };
             for (var piece in board) {
                 if (board[piece].isOu && board[piece].isOwn) {
-                    king = board[piece].position;
+                    king["isOwn"] = board[piece].position;
+                } else if (board[piece].isOu && !board[piece].isOwn) {
+                    king["isEnemy"] = board[piece].position;
                 }
             }
             return king;
         }
 
-        // 王手を掛けられている状態かチェック
+        // 自玉or相手玉が王手を掛けられているか判定
 
     }, {
-        key: "getCheckStatus",
-        value: function getCheckStatus(board) {
+        key: "isCheck",
+        value: function isCheck(board) {
             var king = board.getKingPosition(board);
-            var check = false;
+            var isCheck = { "isOwn": false, "isEnemy": false };
             for (var piece in board) {
-                if (in_array(king, board[piece].moveArea)) {
-                    check = true;
-                    break;
+                if (in_array(king["isOwn"], board[piece].moveArea)) {
+                    isCheck["isOwn"] = true;
+                } else if (in_array(king["isEnemy"], board[piece].moveArea)) {
+                    isCheck["isEnemy"] = true;
                 }
             }
-            return check;
+            return isCheck;
+        }
+
+        //自玉or相手玉が詰んでいるか判定
+
+    }, {
+        key: "isCheckMate",
+        value: function isCheckMate(board) {
+            var isCheckMate = { "isOwn": true, "isEnemy": true };
+            for (var piece in board) {
+                if (board[piece].isOwn && board[piece].moveArea.length > 0) {
+                    isCheckMate["isOwn"] = false;
+                } else if (!board[piece].isOwn && board[piece].moveArea.length > 0) {
+                    isCheckMate["isEnemy"] = false;
+                }
+            }
+            return isCheckMate;
         }
     }]);
 
@@ -1004,8 +841,8 @@ var Piece = function () {
         this.isNka = isHold ? false : koma == GlobalVar.NKA ? true : false;
         this.isNhi = isHold ? false : koma == GlobalVar.NHI ? true : false;
         this.moveArea = [];
-        this.komaImg = is_null(this.koma) ? null : this.setKomaImg();
         if (this.isHold) this.setHold();
+        this.komaImg = this.isHold && this.koma == 0 || is_null(this.koma) ? null : this.setKomaImg();
     }
 
     _createClass(Piece, [{
@@ -1047,67 +884,35 @@ var Piece = function () {
         key: "setKomaImg",
         value: function setKomaImg() {
             if (this.isOwn) {
-                switch (Number(this.koma)) {
-                    case 0:
-                        return "Sfu.png";
-                    case 1:
-                        return "Skyo.png";
-                    case 2:
-                        return "Skei.png";
-                    case 3:
-                        return "Sgin.png";
-                    case 4:
-                        return "Skin.png";
-                    case 5:
-                        return "Skaku.png";
-                    case 6:
-                        return "Shi.png";
-                    case 7:
-                        return "Sou.png";
-                    case 8:
-                        return "Sto.png";
-                    case 9:
-                        return "Snkyo.png";
-                    case 10:
-                        return "Snkei.png";
-                    case 11:
-                        return "Sngin.png";
-                    case 12:
-                        return "Suma.png";
-                    case 13:
-                        return "Sryu.png";
-                }
+                if (this.isHu) return "Sfu.png";
+                if (this.isKy) return "Skyo.png";
+                if (this.isKe) return "Skei.png";
+                if (this.isGi) return "Sgin.png";
+                if (this.isKi) return "Skin.png";
+                if (this.isKa) return "Skaku.png";
+                if (this.isHi) return "Shi.png";
+                if (this.isOu) return "Sou.png";
+                if (this.isNhu) return "Sto.png";
+                if (this.isNky) return "Snkyo.png";
+                if (this.isNke) return "Snkei.png";
+                if (this.isNgi) return "Sngin.png";
+                if (this.isNka) return "Suma.png";
+                if (this.isNhi) return "Sryu.png";
             } else {
-                switch (Number(this.koma)) {
-                    case 0:
-                        return "Efu.png";
-                    case 1:
-                        return "Ekyo.png";
-                    case 2:
-                        return "Ekei.png";
-                    case 3:
-                        return "Egin.png";
-                    case 4:
-                        return "Ekin.png";
-                    case 5:
-                        return "Ekaku.png";
-                    case 6:
-                        return "Ehi.png";
-                    case 7:
-                        return "Eou.png";
-                    case 8:
-                        return "Eto.png";
-                    case 9:
-                        return "Enkyo.png";
-                    case 10:
-                        return "Enkei.png";
-                    case 11:
-                        return "Engin.png";
-                    case 12:
-                        return "Euma.png";
-                    case 13:
-                        return "Eryu.png";
-                }
+                if (this.isHu) return "Efu.png";
+                if (this.isKy) return "Ekyo.png";
+                if (this.isKe) return "Ekei.png";
+                if (this.isGi) return "Egin.png";
+                if (this.isKi) return "Ekin.png";
+                if (this.isKa) return "Ekaku.png";
+                if (this.isHi) return "Ehi.png";
+                if (this.isOu) return "Eou.png";
+                if (this.isNhu) return "Eto.png";
+                if (this.isNky) return "Enkyo.png";
+                if (this.isNke) return "Enkei.png";
+                if (this.isNgi) return "Engin.png";
+                if (this.isNka) return "Euma.png";
+                if (this.isNhi) return "Eryu.png";
             }
         }
 
