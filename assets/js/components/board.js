@@ -330,5 +330,22 @@ export default class Board {
         }
         return check;
     }
+    
+    //自玉or相手玉が詰んでいるか判定
+    isCheckMate(board){
+        let isCheckMate = {"isOwn":false,"isEnemy":false};
+        
+        for (let piece in board) {
+            if(board[piece].isOwn && board[piece].moveArea.length > 0){
+                isCheckMate["isOwn"] = true;
+                break;
+            }else if(!board[piece].isOwn && board[piece].moveArea.length > 0){
+                isCheckMate["isEnemy"] = true;
+                break;
+            }
+        }
+        return isCheckMate;
+    }
+    
 
 }
