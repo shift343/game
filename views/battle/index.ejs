@@ -13,7 +13,7 @@ var matchingInfo = <%- JSON.stringify(matchingInfo) %>;
 var own = <%- JSON.stringify(own) %>;
 var game  = new Game(matchingInfo,own);
 var board = new Board(boardInfo,game);
-board.extractLegalArea(board,game);
+board.extractLegalArea(game);
 
 // 部屋に入室
 this.socket.emit("joinBattle", game.roomId);
@@ -140,7 +140,7 @@ this.socket.on("updateBoard", function (data) {
     let newBoard = new Board(data.board,app.$data.game);
     // 手番のみ合法手を生成
     if(!data.isOwn) {
-        newBoard.extractLegalArea(newBoard,game);
+        newBoard.extractLegalArea(game);
     }
     app.$data.board = newBoard;
     app.$data.teban = data.teban;

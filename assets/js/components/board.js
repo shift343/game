@@ -56,8 +56,6 @@ export default class Board {
                 this[pos] = new Piece(null,pos,false,false,false,false);
             }
         };
-        this.showMoveArea(this);
-
     }
 
     // 単純な盤面配列に変換
@@ -80,37 +78,60 @@ export default class Board {
     }
 
     // 移動可能範囲生成
-    showMoveArea(board){
-        for (let piece in board) {
-            piece = !board[piece].isHold ? board[piece].setMoveArea(board) : !is_null(board[piece].koma) ? board[piece].setShotArea(board) : piece;
+    showMoveArea(board,isOwn){
+        if(isOwn == undefined){
+            for (let piece in board) {
+                if(!is_null(board[piece].koma) && !board[piece].isHold){
+                    board[piece].setMoveArea(board);
+                }else if(!is_null(board[piece].koma)){
+                    board[piece].setShotArea(board);
+                }
+            }
+        }else if(isOwn){
+            for (let piece in board) {
+                if(!is_null(board[piece].koma) && !board[piece].isHold && board[piece].isOwn){
+                    board[piece].setMoveArea(board);
+                }else if(!is_null(board[piece].koma) && board[piece].isOwn){
+                    board[piece].setShotArea(board);
+                }
+            }
+        }else if(!isOwn){
+            for (let piece in board) {
+                if(!is_null(board[piece].koma) && !board[piece].isHold && !board[piece].isOwn){
+                    board[piece].setMoveArea(board);
+                }
+            }
         }
         return board;
     }
 
-    // 移動可能範囲から合法手を生成
-    extractLegalArea(board,game){
+    // 合法手を生成
+    extractLegalArea(game){
+
+        // 移動可能範囲生成
+        this.showMoveArea(this,true);
 
         // 一時的に上書き用のクラスを作る
-        let tempBoard = new Board(board.convertBoard(board),game);
+        let tempBoard = new Board(this.convertBoard(this),game);
 
-        for (let piece in board) {
-            if(board[piece].isOwn && !board[piece].isHold){
+        for (let piece in this) {
+            if(this[piece].isOwn && !this[piece].isHold){
                 // 最終的な合法手
-                let extractLegalMoveArea = board[piece].moveArea;
+                let extractLegalMoveArea = this[piece].moveArea;
                 // 移動元の駒を複製
-                let beforePiece = new Piece(board[piece].koma,board[piece].position,board[piece].isSente,true,board[piece].isHold,board[piece].isEvolve);
+                let beforePiece = new Piece(this[piece].koma,this[piece].position,this[piece].isSente,true,this[piece].isHold,this[piece].isEvolve);
                 // 一手一手進めた駒で盤面を判断していく
                 for(let movePos in extractLegalMoveArea) {
                     // 移動先の駒を生成
-                    let afterPiece  = new Piece(board[piece].koma,extractLegalMoveArea[movePos],board[piece].isSente,true,board[piece].isHold,board[piece].isEvolve);
+                    let afterPiece  = new Piece(this[piece].koma,extractLegalMoveArea[movePos],this[piece].isSente,true,this[piece].isHold,this[piece].isEvolve);
                     // 移動先巻き戻し用の駒を複製
-                    let reversePiece = is_null(board[extractLegalMoveArea[movePos]].koma) ? new Piece(null,extractLegalMoveArea[movePos],false,false,false,false) : board[extractLegalMoveArea[movePos]];
+                    let reversePiece = is_null(this[extractLegalMoveArea[movePos]].koma) ? new Piece(null,extractLegalMoveArea[movePos],false,false,false,false) : this[extractLegalMoveArea[movePos]];
                     // 移動先を上書き
                     tempBoard[extractLegalMoveArea[movePos]] = afterPiece;
                     // 移動元を初期化
-                    tempBoard[board[piece].position] = new Piece(null,board[piece].position,false,false,false,false);
+                    tempBoard[this[piece].position] = new Piece(null,this[piece].position,false,false,false,false);
                     // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-                    let isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard));
+                    let isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard,false));
                     if(isCheck["isOwn"]){
                         delete extractLegalMoveArea[movePos];
                     }
@@ -119,9 +140,26 @@ export default class Board {
                     // 移動先を巻き戻し
                     tempBoard[afterPiece.position] = reversePiece;
                 }
-                board[piece].moveArea = extractLegalMoveArea;
-            }else if(board[piece].isOwn && board[piece].isHold){
+                this[piece].moveArea = extractLegalMoveArea;
+            }else if(this[piece].isOwn && this[piece].isHold){
 
+                // // 最終的な合法手
+                // let extractLegalShotArea = this[piece].moveArea;
+                // // 一手一手進めた駒で盤面を判断していく
+                // for(let movePos in extractLegalShotArea) {
+                //     // 移動先の駒を生成
+                //     let afterPiece  = new Piece(this[piece].koma,extractLegalShotArea[movePos],this[piece].isSente,true,this[piece].isHold,this[piece].isEvolve);
+                //     // 移動先を上書き
+                //     tempBoard[extractLegalShotArea[movePos]] = afterPiece;
+                //     // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
+                //     let isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard,false));
+                //     if(isCheck["isOwn"]){
+                //         delete extractLegalShotArea[movePos];
+                //     }
+                //     // 移動先を巻き戻し
+                //     tempBoard[afterPiece.position] = new Piece(null,this[piece].position,false,false,false,false);
+                // }
+                // this[piece].moveArea = extractLegalShotArea;
             }
         }
     }
