@@ -24,7 +24,7 @@
     <div v-if="game.isSente" class="sente">
       <% for (var i = 1; i <= 9; i=i+1) { %>
         <% for (var j = 90; j >= 10; j=j-10) { %>
-          <div v-on:touchstart="onSelect($event)" class="square" id="<%= i+j %>">
+          <div v-on:click="onSelect($event)" class="square" id="<%= i+j %>">
             <div></div>
             <img v-if="board[<%= i+j %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i+j %>].komaImg" height='100%'>
           </div>
@@ -34,7 +34,7 @@
     <div v-if="game.isGote" class="gote">
       <% for (var i = 9; i >= 1; i=i-1) { %>
         <% for (var j = 10; j <= 90; j=j+10) { %>
-          <div v-on:touchstart="onSelect($event)" class="square" id="<%= i+j %>">
+          <div v-on:click="onSelect($event)" class="square" id="<%= i+j %>">
           <div></div>
           <img v-if="board[<%= i+j %>].komaImg" v-bind:src="'/images/pieces/' + board[<%= i+j %>].komaImg" height='100%'>            
           </div>
