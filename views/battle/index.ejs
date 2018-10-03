@@ -45,9 +45,10 @@ var app = new Vue({
         show_MoveArea: function(target_id){
             var targetElement;
             for (square in this.board) {
-                if(this.board[square].isHold) continue;
                 var element = document.getElementById(this.board[square].position);
-                element.firstElementChild.classList.add("blackOut");
+                if(!this.board[square].isHold){
+                    element.firstElementChild.classList.add("blackOut");
+                }
                 if(this.board[square].position == target_id){
                     targetElement = this.board[square];
                 }
