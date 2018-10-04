@@ -24,15 +24,16 @@ global.GlobalFunc = {
         if(isEvolve) {
             koma = GlobalVar.EVOLVE[koma];
         }
+        if(isShot){
+            koma = moveFrom - GlobalVar.HOLD;
+        }
         if(board[moveTo]) {
-            let koma = GlobalVar.REVERSE[board[moveTo]];
-            let key = koma + GlobalVar.HOLD;
+            let holdKoma = GlobalVar.REVERSE[board[moveTo]];
+            let key = holdKoma + GlobalVar.HOLD;
             board[key] = board[key] ? board[key]+1 : 1;
         }
-        // if(isShot){
 
-        // }
-        board[moveFrom] = null;
+        board[moveFrom] = (isShot) ? board[moveFrom]-1 : null;
         board[moveTo] = koma;
         return board;
     },
