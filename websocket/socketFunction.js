@@ -81,9 +81,14 @@ battle.on("connection", function (socket) {
     let moveTo     = data.toPos;      // 移動先
     let koma       = board[moveFrom]; // 駒情報
     let isEvolve   = data.isEvolve;   // 駒成か
+    let isShot     = data.isShot;     // 駒取か
+
+    if(isShot){
+      koma = (moveFrom >= GlobalVar.HOLD + GOTE) ? moveFrom - (GlobalVar.HOLD + GOTE) : moveFrom - (GlobalVar.HOLD - SENTE);
+    }
 
     // 盤面の更新
-    board = GlobalFunc.UpdateBoard(board,koma,moveFrom,moveTo,isEvolve);
+    board = GlobalFunc.UpdateBoard(board,koma,moveFrom,moveTo,isEvolve,isShot);
 
     // 自分に送る情報をまとめる
     ownData = {

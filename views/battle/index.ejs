@@ -114,6 +114,9 @@ var app = new Vue({
                 // 駒成の判定
                 var setEvolve = this.show_Evolve(val) ? true : false;
 
+                // 駒打ちか判定
+                var setShot = (this.moveFrom >= GlobalVar.HOLD) ? true : false;
+
                 // オブジェクトを配列に変換
                 var boardArr = this.board.convertBoard(this.board);
 
@@ -123,7 +126,8 @@ var app = new Vue({
                   board: boardArr,
                   fromPos: this.moveFrom,
                   toPos: this.moveTo,
-                  isEvolve: setEvolve
+                  isEvolve: setEvolve,
+                  isShot: setShot
                 }
 
                 // サーバーに送信
