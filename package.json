@@ -30,7 +30,10 @@
     "node-sass": "^4.9.2",
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
-    "webpack": "^4.16.1",
+    "vue": "^2.5.17",
+    "vue-loader": "^14.2.3",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.20.2",
     "webpack-cli": "^3.1.0"
   }
 }

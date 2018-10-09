@@ -1,4 +1,6 @@
 <div id="shogi">
+  <div v-if="isCheck.isOwn" class="checkedOwn"></div>
+  <div v-if="isCheck.isEnemy" class="checkedEnemy"></div>
   <div class="top">
     <div v-if="game.isSente" class="gote">
       <% for (var i = 1200; i <= 1206; i=i+1) { %>

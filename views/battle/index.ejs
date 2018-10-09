@@ -28,6 +28,8 @@ var app = new Vue({
         moveFrom: null,
         moveTo: null,
         teban: game.ownId == game.sente ? true : false,
+        isCheck: {'isOwn':false,'isEnemy':false},
+        isCheckMate: {'isOwn':false,'isEnemy':false},
 
     },
     methods: {
@@ -137,18 +139,26 @@ var app = new Vue({
                 this.moveTo = null;
                 this.teban = false;
             }
-        }
+        },
+        isCheck: function(val,old){
+        },
+        isCheckMate: function(val,old){
+            if(val["isOwn"]){
+                alert("負けました");
+            }else if(val["isEnemy"]){
+                alert("勝ちました");
+            }
+        },
     }
 });
 // 盤面更新
 this.socket.on("updateBoard", function (data) {
     let newBoard = new Board(data.board,app.$data.game);
-    // 手番のみ合法手を生成
-    if(!data.isOwn) {
-        newBoard.extractLegalArea(game);
-    }
-    app.$data.board = newBoard;
-    app.$data.teban = data.teban;
+    newBoard.extractLegalArea(app.$data.game);
+    app.$data.board       = newBoard;
+    app.$data.teban       = data.teban;
+    app.$data.isCheck     = newBoard.isCheck(newBoard);
+    app.$data.isCheckMate = newBoard.isCheckMate(newBoard);
 });
 
 </script>

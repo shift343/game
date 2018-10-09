@@ -11,6 +11,10 @@ module.exports = [{
     module: {
       rules: [
         {
+          test: /\.vue$/,
+          loader: 'vue-loader'
+        },
+        {
           test: /\.js[x]?$/,
           loader: 'babel-loader',
           exclude: /node_modules/,
@@ -27,6 +31,16 @@ module.exports = [{
           loader: ExtractTextPlugin.extract('css-loader?-url&minimize&sourceMap!sass-loader'),
         },
       ]
+    },
+    resolve: {
+      extensions: ['.js', '.vue'],
+      modules: [
+          "node_modules"
+      ],
+      alias: {
+          // vue.js のビルドを指定する
+          vue: 'vue/dist/vue.common.js'
+      }
     },
     devtool: 'source-map',
     plugins: [

@@ -109,7 +109,7 @@ export default class Board {
     extractLegalArea(game){
 
         // 移動可能範囲生成
-        this.showMoveArea(this,true);
+        this.showMoveArea(this);
         // 一時的に上書き用のクラスを作る
         let tempBoard = new Board(this.convertBoard(this),game);
 
@@ -210,11 +210,16 @@ export default class Board {
     //自玉or相手玉が詰んでいるか判定
     isCheckMate(board){
         let isCheckMate = {"isOwn":true,"isEnemy":true};
+        console.log("ここから");
         for (let piece in board) {
-            if(board[piece].isOwn && board[piece].moveArea.length > 0){
-                isCheckMate["isOwn"] = false;
-            }else if(!board[piece].isOwn && board[piece].moveArea.length > 0){
-                isCheckMate["isEnemy"] = false;
+            if(board[piece].isHold && board[piece].koma == 0){
+            }else{
+                if(board[piece].isOwn && board[piece].moveArea[0]){
+                    isCheckMate["isOwn"] = false;
+                }else if(!board[piece].isOwn && board[piece].moveArea[0]){
+                    console.log(board[piece]);
+                    isCheckMate["isEnemy"] = false;
+                }
             }
         }
         return isCheckMate;

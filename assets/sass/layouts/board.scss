@@ -105,5 +105,29 @@
         .hold{
             display: inline-block;
         }
+        .checkedEnemy{
+            position: fixed;
+            width: 220px;
+            height: 130px;
+            z-index: 100;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-image: url("../images/parts/check_e.png");
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+        .checkedOwn{
+            position: fixed;
+            width: 220px;
+            height: 130px;
+            z-index: 100;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-image: url("../images/parts/check_o.png");
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
     }
 }

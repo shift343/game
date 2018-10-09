@@ -131,5 +131,27 @@ html {
     background: rgba(85, 255, 51, 0.3); } }
   #battle_page #shogi .hold {
     display: inline-block; }
+  #battle_page #shogi .checkedEnemy {
+    position: fixed;
+    width: 220px;
+    height: 130px;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../images/parts/check_e.png");
+    background-repeat: no-repeat;
+    background-size: 100%; }
+  #battle_page #shogi .checkedOwn {
+    position: fixed;
+    width: 220px;
+    height: 130px;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../images/parts/check_o.png");
+    background-repeat: no-repeat;
+    background-size: 100%; }
 
 /*# sourceMappingURL=main.css.map*/
