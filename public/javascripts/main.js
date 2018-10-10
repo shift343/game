@@ -516,22 +516,36 @@ var Board = function () {
 
     }, {
         key: "extractLegalArea",
-        value: function extractLegalArea(game) {
+        value: function extractLegalArea(game, isOwn) {
 
             // 移動可能範囲生成
             this.showMoveArea(this);
             // 一時的に上書き用のクラスを作る
             var tempBoard = new Board(this.convertBoard(this), game);
 
+            // isOwn=trueだと自駒の移動範囲、falseだと相手駒の移動範囲
+            var shotArea = [];
+            var isSente = void 0,
+                isOwnStr = void 0;
+            if (isOwn) {
+                shotArea = this[1103].isOwn ? this[1103].moveArea : this[1203].moveArea;
+                isSente = game.isSente;
+                isOwnStr = "isOwn";
+            } else {
+                shotArea = this[1103].isOwn ? this[1203].moveArea : this[1103].moveArea;
+                isSente = !game.isSente;
+                isOwnStr = "isEnemy";
+            }
+
             /*------- 処理速度向上のため必要な駒打ち可能範囲だけ生成しておく -------*/
-            var shotArea = this[1103].isOwn ? this[1103].moveArea : this[1203].moveArea;
+
             // 手駒の合法手生成    
             for (var i = 0; i < shotArea.length; i = i + 1) {
                 // 移動先を上書き
-                tempBoard[shotArea[i]] = new Piece(3, shotArea[i], game.isSente, true, false, false);
+                tempBoard[shotArea[i]] = new Piece(3, shotArea[i], isSente, isOwn, false, false);
                 // 相手の移動先を生成
                 for (var tempPiece in tempBoard) {
-                    if (!is_null(tempBoard[tempPiece].koma) && !tempBoard[tempPiece].isHold && !tempBoard[tempPiece].isOwn) {
+                    if (!is_null(tempBoard[tempPiece].koma) && !tempBoard[tempPiece].isHold && !isOwn) {
                         if (tempBoard[tempPiece].isKy || tempBoard[tempPiece].isKa || tempBoard[tempPiece].isHi || tempBoard[tempPiece].isNka || tempBoard[tempPiece].isNhi) {
                             tempBoard[tempPiece].setMoveArea(tempBoard);
                         } else {
@@ -541,7 +555,7 @@ var Board = function () {
                 }
                 // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
                 var isCheck = tempBoard.isCheck(tempBoard);
-                if (isCheck["isOwn"]) {
+                if (isCheck[isOwnStr]) {
                     delete shotArea[i];
                 }
                 // 移動先を巻き戻し
@@ -551,15 +565,15 @@ var Board = function () {
 
             // 合法手生成
             for (var piece in this) {
-                if (this[piece].isOwn && !this[piece].isHold) {
+                if (this[piece].isOwn == isOwn && !this[piece].isHold) {
                     // 移動可能範囲
                     var extractLegalMoveArea = this[piece].moveArea;
                     // 移動元の駒を複製
-                    var beforePiece = new Piece(this[piece].koma, this[piece].position, this[piece].isSente, true, this[piece].isHold, this[piece].isEvolve);
+                    var beforePiece = new Piece(this[piece].koma, this[piece].position, this[piece].isSente, this[piece].isOwn, this[piece].isHold, this[piece].isEvolve);
                     // 一手一手進めた駒で盤面を判断していく
                     for (var movePos in extractLegalMoveArea) {
                         // 移動先の駒を生成
-                        var afterPiece = new Piece(this[piece].koma, extractLegalMoveArea[movePos], this[piece].isSente, true, this[piece].isHold, this[piece].isEvolve);
+                        var afterPiece = new Piece(this[piece].koma, extractLegalMoveArea[movePos], this[piece].isSente, this[piece].isOwn, this[piece].isHold, this[piece].isEvolve);
                         // 移動先巻き戻し用の駒を複製
                         var reversePiece = is_null(this[extractLegalMoveArea[movePos]].koma) ? new Piece(null, extractLegalMoveArea[movePos], false, false, false, false) : this[extractLegalMoveArea[movePos]];
                         // 移動先を上書き
@@ -567,8 +581,8 @@ var Board = function () {
                         // 移動元を初期化
                         tempBoard[this[piece].position] = new Piece(null, this[piece].position, false, false, false, false);
                         // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-                        var _isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard, false));
-                        if (_isCheck["isOwn"]) {
+                        var _isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard, !isOwn));
+                        if (_isCheck[isOwnStr]) {
                             delete extractLegalMoveArea[movePos];
                         }
                         // 移動元を戻す
@@ -579,7 +593,7 @@ var Board = function () {
                     // 最終的な合法手をセット
                     this[piece].moveArea = extractLegalMoveArea;
                     // 駒打ち用の合法手をセット
-                } else if (this[piece].isOwn && this[piece].isHold) {
+                } else if (this[piece].isOwn == isOwn && this[piece].isHold) {
                     for (var _i = 0; _i < this[piece].moveArea.length; _i = _i + 1) {
                         if (!in_array(this[piece].moveArea[_i], shotArea)) {
                             delete this[piece].moveArea[_i];
@@ -628,13 +642,11 @@ var Board = function () {
         key: "isCheckMate",
         value: function isCheckMate(board) {
             var isCheckMate = { "isOwn": true, "isEnemy": true };
-            console.log("ここから");
             for (var piece in board) {
                 if (board[piece].isHold && board[piece].koma == 0) {} else {
                     if (board[piece].isOwn && board[piece].moveArea[0]) {
                         isCheckMate["isOwn"] = false;
                     } else if (!board[piece].isOwn && board[piece].moveArea[0]) {
-                        console.log(board[piece]);
                         isCheckMate["isEnemy"] = false;
                     }
                 }
