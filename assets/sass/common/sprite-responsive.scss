@@ -1,0 +1,198 @@
+@charset "UTF-8";
+
+// 変数が入っているscssをimport
+@mixin sprite-responsive($sprite){
+    $sheet-w    : nth($sprite, 7);
+    $sheet-h    : nth($sprite, 8);
+    $sprite-w   : nth($sprite, 5);
+    $sprite-h   : nth($sprite, 6);
+    $offset-x   : nth($sprite, 1);
+    $offset-y   : nth($sprite, 2);
+    $bg-path    : nth($sprite, 9);
+
+    // テキストを隠す
+    white-space: nowrap;
+    text-indent: 100%;
+    overflow: hidden;
+    font-size: 0;
+
+    background-image: url($bg-path);
+    background-size: ($sheet-w / $sprite-w * 100 + 0%) ($sheet-h / $sprite-h * 100+ 0%);
+    background-position: ($offset-x / ($sheet-w - $sprite-w) * 100 + 0%) ($offset-y / ($sheet-h - $sprite-h) * 100 + 0%);
+
+    &:after{
+        content: '';
+        display: block;
+        padding-top: ($sprite-h / $sprite-w * 100 + 0%);
+    }
+
+}
+
+.Efu{
+    @include sprite-responsive($-efu);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Egin{
+    @include sprite-responsive($-egin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Ehi{
+    @include sprite-responsive($-ehi);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Ekaku{
+    @include sprite-responsive($-ekaku);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Ekei{
+    @include sprite-responsive($-ekei);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Ekin{
+    @include sprite-responsive($-ekin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Ekyo{
+    @include sprite-responsive($-ekyo);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Engin{
+    @include sprite-responsive($-engin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Enkei{
+    @include sprite-responsive($-enkei);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Enkyo{
+    @include sprite-responsive($-enkyo);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Eou{
+    @include sprite-responsive($-eou);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Eryu{
+    @include sprite-responsive($-eryu);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Eto{
+    @include sprite-responsive($-eto);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Euma{
+    @include sprite-responsive($-euma);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sfu{
+    @include sprite-responsive($-sfu);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sgin{
+    @include sprite-responsive($-sgin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Shi{
+    @include sprite-responsive($-shi);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Skaku{
+    @include sprite-responsive($-skaku);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Skei{
+    @include sprite-responsive($-skei);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Skin{
+    @include sprite-responsive($-skin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Skyo{
+    @include sprite-responsive($-skyo);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sngin{
+    @include sprite-responsive($-sngin);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Snkei{
+    @include sprite-responsive($-snkei);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Snkyo{
+    @include sprite-responsive($-snkyo);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sou{
+    @include sprite-responsive($-sou);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sryu{
+    @include sprite-responsive($-sryu);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Sto{
+    @include sprite-responsive($-sto);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+.Suma{
+    @include sprite-responsive($-suma);
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}

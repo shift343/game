@@ -34,14 +34,20 @@ window.GlobalFunc = {
     },
 
     // 盤面を更新する
-    UpdateBoard : function (board,koma,moveFrom,moveTo,isEvolve) {
+    UpdateBoard : (board,koma,moveFrom,moveTo,isEvolve,isShot) => {
         if(isEvolve) {
-            koma = MakeEvolve(koma);
+            koma = GlobalVar.EVOLVE[koma];
+        }
+        if(isShot){
+            koma = moveFrom - GlobalVar.HOLD;
         }
         if(board[moveTo]) {
-            board = TakeKoma(board,moveTo);
+            let holdKoma = GlobalVar.REVERSE[board[moveTo]];
+            let key = holdKoma + GlobalVar.HOLD;
+            board[key] = board[key] ? board[key]+1 : 1;
         }
-        board[moveFrom] = null;
+
+        board[moveFrom] = (isShot) ? board[moveFrom]-1 : null;
         board[moveTo] = koma;
         return board;
     },

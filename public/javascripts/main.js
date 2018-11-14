@@ -120,6 +120,8 @@ __webpack_require__(/*! ./common/globalVar.js */ "./assets/js/common/globalVar.j
 
 __webpack_require__(/*! ./common/globalFunc.js */ "./assets/js/common/globalFunc.js");
 
+__webpack_require__(/*! ./library/serif.js */ "./assets/js/library/serif.js");
+
 var _vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
 var _vue2 = _interopRequireDefault(_vue);
@@ -136,18 +138,13 @@ var _board = __webpack_require__(/*! ./components/board.js */ "./assets/js/compo
 
 var _board2 = _interopRequireDefault(_board);
 
-var _timer = __webpack_require__(/*! ./components/timer.vue */ "./assets/js/components/timer.vue");
-
-var _timer2 = _interopRequireDefault(_timer);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-window.Vue = _vue2.default; // 共通ファイル読み込み
+// 共通ファイル読み込み
+window.Vue = _vue2.default;
 window.Game = _game2.default;
 window.Piece = _piece2.default;
 window.Board = _board2.default;
-window.Timer = _timer2.default;
-_vue2.default.component('timer', _timer2.default);
 
 /***/ }),
 
@@ -284,14 +281,20 @@ window.GlobalFunc = {
     },
 
     // 盤面を更新する
-    UpdateBoard: function UpdateBoard(board, koma, moveFrom, moveTo, isEvolve) {
+    UpdateBoard: function UpdateBoard(board, koma, moveFrom, moveTo, isEvolve, isShot) {
         if (isEvolve) {
-            koma = MakeEvolve(koma);
+            koma = GlobalVar.EVOLVE[koma];
+        }
+        if (isShot) {
+            koma = moveFrom - GlobalVar.HOLD;
         }
         if (board[moveTo]) {
-            board = TakeKoma(board, moveTo);
+            var holdKoma = GlobalVar.REVERSE[board[moveTo]];
+            var key = holdKoma + GlobalVar.HOLD;
+            board[key] = board[key] ? board[key] + 1 : 1;
         }
-        board[moveFrom] = null;
+
+        board[moveFrom] = isShot ? board[moveFrom] - 1 : null;
         board[moveTo] = koma;
         return board;
     }
@@ -506,6 +509,8 @@ var Board = function () {
                 for (var _piece2 in board) {
                     if (!is_null(board[_piece2].koma) && !board[_piece2].isHold && !board[_piece2].isOwn) {
                         board[_piece2].setMoveArea(board);
+                    } else if (!is_null(board[_piece2].koma) && !board[_piece2].isOwn) {
+                        board[_piece2].setShotArea(board);
                     }
                 }
             }
@@ -516,56 +521,16 @@ var Board = function () {
 
     }, {
         key: "extractLegalArea",
-        value: function extractLegalArea(game, isOwn) {
+        value: function extractLegalArea(game) {
 
             // 移動可能範囲生成
             this.showMoveArea(this);
             // 一時的に上書き用のクラスを作る
             var tempBoard = new Board(this.convertBoard(this), game);
 
-            // isOwn=trueだと自駒の移動範囲、falseだと相手駒の移動範囲
-            var shotArea = [];
-            var isSente = void 0,
-                isOwnStr = void 0;
-            if (isOwn) {
-                shotArea = this[1103].isOwn ? this[1103].moveArea : this[1203].moveArea;
-                isSente = game.isSente;
-                isOwnStr = "isOwn";
-            } else {
-                shotArea = this[1103].isOwn ? this[1203].moveArea : this[1103].moveArea;
-                isSente = !game.isSente;
-                isOwnStr = "isEnemy";
-            }
-
-            /*------- 処理速度向上のため必要な駒打ち可能範囲だけ生成しておく -------*/
-
-            // 手駒の合法手生成    
-            for (var i = 0; i < shotArea.length; i = i + 1) {
-                // 移動先を上書き
-                tempBoard[shotArea[i]] = new Piece(3, shotArea[i], isSente, isOwn, false, false);
-                // 相手の移動先を生成
-                for (var tempPiece in tempBoard) {
-                    if (!is_null(tempBoard[tempPiece].koma) && !tempBoard[tempPiece].isHold && !isOwn) {
-                        if (tempBoard[tempPiece].isKy || tempBoard[tempPiece].isKa || tempBoard[tempPiece].isHi || tempBoard[tempPiece].isNka || tempBoard[tempPiece].isNhi) {
-                            tempBoard[tempPiece].setMoveArea(tempBoard);
-                        } else {
-                            tempBoard[tempPiece].moveArea = [];
-                        }
-                    }
-                }
-                // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-                var isCheck = tempBoard.isCheck(tempBoard);
-                if (isCheck[isOwnStr]) {
-                    delete shotArea[i];
-                }
-                // 移動先を巻き戻し
-                tempBoard[shotArea[i]] = new Piece(null, shotArea[i], false, false, false, false);
-            }
-            /*---------------------------------------------------------------*/
-
             // 合法手生成
             for (var piece in this) {
-                if (this[piece].isOwn == isOwn && !this[piece].isHold) {
+                if (!is_null(this[piece].koma) && !this[piece].isHold) {
                     // 移動可能範囲
                     var extractLegalMoveArea = this[piece].moveArea;
                     // 移動元の駒を複製
@@ -581,8 +546,8 @@ var Board = function () {
                         // 移動元を初期化
                         tempBoard[this[piece].position] = new Piece(null, this[piece].position, false, false, false, false);
                         // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
-                        var _isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard, !isOwn));
-                        if (_isCheck[isOwnStr]) {
+                        var isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard));
+                        if (this[piece].isOwn && isCheck["isOwn"] || !this[piece].isOwn && isCheck["isEnemy"]) {
                             delete extractLegalMoveArea[movePos];
                         }
                         // 移動元を戻す
@@ -593,12 +558,62 @@ var Board = function () {
                     // 最終的な合法手をセット
                     this[piece].moveArea = extractLegalMoveArea;
                     // 駒打ち用の合法手をセット
-                } else if (this[piece].isOwn == isOwn && this[piece].isHold) {
-                    for (var _i = 0; _i < this[piece].moveArea.length; _i = _i + 1) {
-                        if (!in_array(this[piece].moveArea[_i], shotArea)) {
-                            delete this[piece].moveArea[_i];
+                } else if (!is_null(this[piece].koma) && this[piece].isHold) {
+
+                    if (this[piece].koma == 0) {
+                        // 合法手を空に
+                        this[piece].moveArea = [];
+                    } else {
+                        // 移動可能範囲
+                        var extractLegalShotArea = this[piece].moveArea;
+
+                        // 一手一手進めた駒で盤面を判断していく
+                        for (var _movePos in extractLegalShotArea) {
+                            // 移動先の駒を生成
+                            var _afterPiece = new Piece(this[piece].koma, extractLegalShotArea[_movePos], this[piece].isSente, this[piece].isOwn, this[piece].isHold, this[piece].isEvolve);
+                            // 移動先を上書き
+                            tempBoard[extractLegalShotArea[_movePos]] = _afterPiece;
+                            // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
+                            var _isCheck = tempBoard.isCheck(tempBoard.showMoveArea(tempBoard));
+                            if (this[piece].isOwn && _isCheck["isOwn"] || !this[piece].isOwn && _isCheck["isEnemy"]) {
+                                delete extractLegalShotArea[_movePos];
+                            }
+                            // 移動先を巻き戻し
+                            tempBoard[_afterPiece.position] = new Piece(null, extractLegalShotArea[_movePos], false, false, false, false);
                         }
+                        // 最終的な合法手をセット
+                        this[piece].moveArea = extractLegalShotArea;
                     }
+
+                    // 手駒の合法手生成
+                    // for (let i=0; i < shotArea["isOwn"].moveArea.length; i=i+1) {
+                    //     // 移動先を上書き
+                    //     tempBoard[shotArea[i]] = new Piece(3,shotArea[i],isSente,isOwn,false,false);
+                    //     // 相手の移動先を生成
+                    //     for (let tempPiece in tempBoard) {
+                    //         if(!is_null(tempBoard[tempPiece].koma) && !tempBoard[tempPiece].isHold && !isOwn){
+                    //             if(tempBoard[tempPiece].isKy || tempBoard[tempPiece].isKa || tempBoard[tempPiece].isHi || tempBoard[tempPiece].isNka || tempBoard[tempPiece].isNhi){
+                    //                 tempBoard[tempPiece].setMoveArea(tempBoard);
+                    //             }else{
+                    //                 tempBoard[tempPiece].moveArea = [];
+                    //             }
+                    //         }
+                    //     }
+                    //     // 王手の掛かる手かチェックし、そうだった場合は選択マスから削除
+                    //     let isCheck = tempBoard.isCheck(tempBoard);
+                    //     if(isCheck[isOwnStr]){
+                    //         delete shotArea[i];
+                    //     }
+                    //     // 移動先を巻き戻し
+                    //     tempBoard[shotArea[i]] = new Piece(null,shotArea[i],false,false,false,false);
+                    // }
+                    /*---------------------------------------------------------------*/
+
+                    // for(let i = 0; i < this[piece].moveArea.length; i=i+1){
+                    //     if(!in_array(this[piece].moveArea[i],shotArea)){
+                    //         delete this[piece].moveArea[i];
+                    //     }
+                    // }
                 }
             }
         }
@@ -643,12 +658,10 @@ var Board = function () {
         value: function isCheckMate(board) {
             var isCheckMate = { "isOwn": true, "isEnemy": true };
             for (var piece in board) {
-                if (board[piece].isHold && board[piece].koma == 0) {} else {
-                    if (board[piece].isOwn && board[piece].moveArea[0]) {
-                        isCheckMate["isOwn"] = false;
-                    } else if (!board[piece].isOwn && board[piece].moveArea[0]) {
-                        isCheckMate["isEnemy"] = false;
-                    }
+                if (board[piece].isOwn && board[piece].moveArea[0]) {
+                    isCheckMate["isOwn"] = false;
+                } else if (!board[piece].isOwn && board[piece].moveArea[0]) {
+                    isCheckMate["isEnemy"] = false;
                 }
             }
             return isCheckMate;
@@ -741,7 +754,7 @@ var Piece = function () {
         this.isNhi = isHold ? false : koma == GlobalVar.NHI ? true : false;
         this.moveArea = [];
         if (this.isHold) this.setHold();
-        this.komaImg = this.isHold && this.koma == 0 || is_null(this.koma) ? null : this.setKomaImg();
+        this.komaClass = this.isHold && this.koma == 0 || is_null(this.koma) ? null : this.setKomaClass();
     }
 
     _createClass(Piece, [{
@@ -780,38 +793,38 @@ var Piece = function () {
             }
         }
     }, {
-        key: "setKomaImg",
-        value: function setKomaImg() {
+        key: "setKomaClass",
+        value: function setKomaClass() {
             if (this.isOwn) {
-                if (this.isHu) return "Sfu.png";
-                if (this.isKy) return "Skyo.png";
-                if (this.isKe) return "Skei.png";
-                if (this.isGi) return "Sgin.png";
-                if (this.isKi) return "Skin.png";
-                if (this.isKa) return "Skaku.png";
-                if (this.isHi) return "Shi.png";
-                if (this.isOu) return "Sou.png";
-                if (this.isNhu) return "Sto.png";
-                if (this.isNky) return "Snkyo.png";
-                if (this.isNke) return "Snkei.png";
-                if (this.isNgi) return "Sngin.png";
-                if (this.isNka) return "Suma.png";
-                if (this.isNhi) return "Sryu.png";
+                if (this.isHu) return "Sfu";
+                if (this.isKy) return "Skyo";
+                if (this.isKe) return "Skei";
+                if (this.isGi) return "Sgin";
+                if (this.isKi) return "Skin";
+                if (this.isKa) return "Skaku";
+                if (this.isHi) return "Shi";
+                if (this.isOu) return "Sou";
+                if (this.isNhu) return "Sto";
+                if (this.isNky) return "Snkyo";
+                if (this.isNke) return "Snkei";
+                if (this.isNgi) return "Sngin";
+                if (this.isNka) return "Suma";
+                if (this.isNhi) return "Sryu";
             } else {
-                if (this.isHu) return "Efu.png";
-                if (this.isKy) return "Ekyo.png";
-                if (this.isKe) return "Ekei.png";
-                if (this.isGi) return "Egin.png";
-                if (this.isKi) return "Ekin.png";
-                if (this.isKa) return "Ekaku.png";
-                if (this.isHi) return "Ehi.png";
-                if (this.isOu) return "Eou.png";
-                if (this.isNhu) return "Eto.png";
-                if (this.isNky) return "Enkyo.png";
-                if (this.isNke) return "Enkei.png";
-                if (this.isNgi) return "Engin.png";
-                if (this.isNka) return "Euma.png";
-                if (this.isNhi) return "Eryu.png";
+                if (this.isHu) return "Efu";
+                if (this.isKy) return "Ekyo";
+                if (this.isKe) return "Ekei";
+                if (this.isGi) return "Egin";
+                if (this.isKi) return "Ekin";
+                if (this.isKa) return "Ekaku";
+                if (this.isHi) return "Ehi";
+                if (this.isOu) return "Eou";
+                if (this.isNhu) return "Eto";
+                if (this.isNky) return "Enkyo";
+                if (this.isNke) return "Enkei";
+                if (this.isNgi) return "Engin";
+                if (this.isNka) return "Euma";
+                if (this.isNhi) return "Eryu";
             }
         }
 
@@ -1011,53 +1024,64 @@ exports.default = Piece;
 
 /***/ }),
 
-/***/ "./assets/js/components/timer.vue":
-/*!****************************************!*\
-  !*** ./assets/js/components/timer.vue ***!
-  \****************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./assets/js/library/serif.js":
+/*!************************************!*\
+  !*** ./assets/js/library/serif.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_timer_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !babel-loader!../../../node_modules/vue-loader/lib/selector?type=script&index=0!./timer.vue */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./assets/js/components/timer.vue");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_template_compiler_index_id_data_v_5bf69f94_hasScoped_true_optionsId_0_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_timer_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/template-compiler/index?{"id":"data-v-5bf69f94","hasScoped":true,"optionsId":"0","buble":{"transforms":{}}}!../../../node_modules/vue-loader/lib/selector?type=template&index=0!./timer.vue */ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-5bf69f94\",\"hasScoped\":true,\"optionsId\":\"0\",\"buble\":{\"transforms\":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./assets/js/components/timer.vue");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_component_normalizer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/component-normalizer */ "./node_modules/vue-loader/lib/runtime/component-normalizer.js");
-var disposed = false
-function injectStyle (context) {
-  if (disposed) return
-  __webpack_require__(/*! !vue-style-loader!css-loader?sourceMap!../../../node_modules/vue-loader/lib/style-compiler/index?{"optionsId":"0","vue":true,"id":"data-v-5bf69f94","scoped":true,"sourceMap":true}!../../../node_modules/vue-loader/lib/selector?type=styles&index=0!./timer.vue */ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/index.js?sourceMap!./node_modules/vue-loader/lib/style-compiler/index.js?{\"optionsId\":\"0\",\"vue\":true,\"id\":\"data-v-5bf69f94\",\"scoped\":true,\"sourceMap\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue")
-}
-/* script */
 
 
-/* template */
+// 第一引数: 第何章か
+// 第二引数: 第何回目の会話か
+// 第三引数: プレイヤーの返答パターン
+window.serif = function (playerName) {
 
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = "data-v-5bf69f94"
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
+    var text = {
+        // チュートリアル
+        0: {
+            //第何回目の会話か
+            0: {
+                //第何回目の会話か
+                0: "棋神さま、木を10回叩いてください",
+                1: "よかった…棋神さま、棋力が回復したのですね!",
+                2: "話が通じない時はどうしようかと思いましたよ",
+                3: "……え",
+                4: "今までの記憶がない?",
+                5: {
+                    0: "機種変したとかではなくてですか？",
+                    1: {
+                        0: "本当に記憶がない"
+                    },
+                    2: {
+                        0: "そういえば機種変した"
+                    }
+                }
+            }
+        },
 
-var Component = Object(_node_modules_vue_loader_lib_runtime_component_normalizer__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_timer_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-  _node_modules_vue_loader_lib_template_compiler_index_id_data_v_5bf69f94_hasScoped_true_optionsId_0_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_timer_vue__WEBPACK_IMPORTED_MODULE_1__["render"],
-  _node_modules_vue_loader_lib_template_compiler_index_id_data_v_5bf69f94_hasScoped_true_optionsId_0_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_timer_vue__WEBPACK_IMPORTED_MODULE_1__["staticRenderFns"],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "assets/js/components/timer.vue"
+        // チュートリアル後
+        1: {}
 
-/* hot reload */
-if (false) {}
+    };
 
-/* harmony default export */ __webpack_exports__["default"] = (Component.exports);
+    return text;
+    // let text;
+    // switch( chapter ) {
+    //     case 1:
+    //         switch( message ) {
+    //             case 1:
 
+    //                 break;
+    //         }
+    //         break;
+
+    //     case 2:        
+    //         break;
+    // }
+};
 
 /***/ }),
 
@@ -1069,189 +1093,6 @@ if (false) {}
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./assets/js/components/timer.vue":
-/*!**************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./assets/js/components/timer.vue ***!
-  \**************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'timer',
-  data() {
-    return {
-      min: 59,
-      sec: 59,
-      timerOn: false,
-      timerObj: null
-    };
-  },
-  methods: {
-    count: function () {
-      if (this.sec <= 0 && this.min >= 1) {
-        this.min--;
-        this.sec = 59;
-      } else if (this.sec <= 0 && this.min <= 0) {
-        this.complete();
-      } else {
-        this.sec--;
-      }
-    },
-
-    start: function () {
-      let self = this;
-      this.timerObj = setInterval(function () {
-        self.count();
-      }, 1000);
-      this.timerOn = true; //timerがOFFであることを状態として保持
-    },
-
-    stop: function () {
-      clearInterval(this.timerObj);
-      this.timerOn = false; //timerがOFFであることを状態として保持
-    },
-
-    complete: function () {
-      clearInterval(this.timerObj);
-    }
-  },
-  computed: {
-    formatTime: function () {
-      let timeStrings = [this.min.toString(), this.sec.toString()].map(function (str) {
-        if (str.length < 2) {
-          return "0" + str;
-        } else {
-          return str;
-        }
-      });
-      return timeStrings[0] + ":" + timeStrings[1];
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?sourceMap!./node_modules/vue-loader/lib/style-compiler/index.js?{\"optionsId\":\"0\",\"vue\":true,\"id\":\"data-v-5bf69f94\",\"scoped\":true,\"sourceMap\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue":
-/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader?sourceMap!./node_modules/vue-loader/lib/style-compiler?{"optionsId":"0","vue":true,"id":"data-v-5bf69f94","scoped":true,"sourceMap":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(true);
-// imports
-
-
-// module
-exports.push([module.i, "\n#timer[data-v-5bf69f94] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.time[data-v-5bf69f94] {\n  font-size: 100px;\n}\n", "", {"version":3,"sources":["/Users/user/Desktop/shogi/assets/js/components/assets/js/components/timer.vue"],"names":[],"mappings":";AAqEA;EACA,cAAA;EACA,oBAAA;EACA,wBAAA;CACA;AACA;EACA,iBAAA;CACA","file":"timer.vue","sourcesContent":["<template>\n  <div id=\"timer\">\n    <div class=\"timer\">\n      <div class=\"time\">\n        {{ formatTime }}\n      </div>\n      <button v-on:click=\"start\" v-if=\"!timerOn\">Start</button>\n      <button v-on:click=\"stop\" v-if=\"timerOn\">Stop</button>\n    </div>\n  </div>\n</template>\n\n<script>\nexport default {\n  name: 'timer',\n  data() {\n    return {\n      min: 59,\n      sec: 59,\n      timerOn: false,\n      timerObj: null,\n    }\n  },\n  methods: {\n    count: function() {\n      if (this.sec <= 0 && this.min >= 1) {\n        this.min --;\n        this.sec = 59;\n      } else if(this.sec <= 0 && this.min <= 0) {\n        this.complete();\n      } else {\n        this.sec --;\n      }\n    },\n\n    start: function() {\n      let self = this;\n      this.timerObj = setInterval(function() {self.count()}, 1000)\n      this.timerOn = true; //timerがOFFであることを状態として保持\n    },\n\n    stop: function() {\n      clearInterval(this.timerObj);\n      this.timerOn = false; //timerがOFFであることを状態として保持\n    },\n\n    complete: function() {\n      clearInterval(this.timerObj)\n    }\n  },\n  computed: {\n    formatTime: function() {\n      let timeStrings = [\n        this.min.toString(),\n        this.sec.toString()\n      ].map(function(str) {\n        if (str.length < 2) {\n          return \"0\" + str\n        } else {\n          return str\n        }\n      })\n      return timeStrings[0] + \":\" + timeStrings[1]\n    }\n  }\n}\n</script>\n\n<style scoped>\n#timer {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.time {\n  font-size: 100px;\n}\n</style>"],"sourceRoot":""}]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/lib/css-base.js":
-/*!*************************************************!*\
-  !*** ./node_modules/css-loader/lib/css-base.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function(useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if(item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
 
 /***/ }),
 
@@ -2368,458 +2209,6 @@ function hasOwnProperty(obj, prop) {
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/runtime/component-normalizer.js":
-/*!*********************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/runtime/component-normalizer.js ***!
-  \*********************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return normalizeComponent; });
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-function normalizeComponent (
-  scriptExports,
-  render,
-  staticRenderFns,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier, /* server only */
-  shadowMode /* vue-cli only */
-) {
-  scriptExports = scriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof scriptExports.default
-  if (type === 'object' || type === 'function') {
-    scriptExports = scriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (render) {
-    options.render = render
-    options.staticRenderFns = staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = shadowMode
-      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
-      : injectStyles
-  }
-
-  if (hook) {
-    if (options.functional) {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      var originalRender = options.render
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return originalRender(h, context)
-      }
-    } else {
-      // inject component registration as beforeCreate hook
-      var existing = options.beforeCreate
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    }
-  }
-
-  return {
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-5bf69f94\",\"hasScoped\":true,\"optionsId\":\"0\",\"buble\":{\"transforms\":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./assets/js/components/timer.vue":
-/*!********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-5bf69f94","hasScoped":true,"optionsId":"0","buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./assets/js/components/timer.vue ***!
-  \********************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "timer" } }, [
-    _c("div", { staticClass: "timer" }, [
-      _c("div", { staticClass: "time" }, [
-        _vm._v("\n      " + _vm._s(_vm.formatTime) + "\n    ")
-      ]),
-      _vm._v(" "),
-      !_vm.timerOn
-        ? _c("button", { on: { click: _vm.start } }, [_vm._v("Start")])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.timerOn
-        ? _c("button", { on: { click: _vm.stop } }, [_vm._v("Stop")])
-        : _vm._e()
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-if (false) {}
-
-/***/ }),
-
-/***/ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/index.js?sourceMap!./node_modules/vue-loader/lib/style-compiler/index.js?{\"optionsId\":\"0\",\"vue\":true,\"id\":\"data-v-5bf69f94\",\"scoped\":true,\"sourceMap\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue":
-/*!**********************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-style-loader!./node_modules/css-loader?sourceMap!./node_modules/vue-loader/lib/style-compiler?{"optionsId":"0","vue":true,"id":"data-v-5bf69f94","scoped":true,"sourceMap":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue ***!
-  \**********************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(/*! !../../../node_modules/css-loader?sourceMap!../../../node_modules/vue-loader/lib/style-compiler?{"optionsId":"0","vue":true,"id":"data-v-5bf69f94","scoped":true,"sourceMap":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./timer.vue */ "./node_modules/css-loader/index.js?sourceMap!./node_modules/vue-loader/lib/style-compiler/index.js?{\"optionsId\":\"0\",\"vue\":true,\"id\":\"data-v-5bf69f94\",\"scoped\":true,\"sourceMap\":true}!./node_modules/vue-loader/lib/selector.js?type=styles&index=0!./assets/js/components/timer.vue");
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var add = __webpack_require__(/*! ../../../node_modules/vue-style-loader/lib/addStylesClient.js */ "./node_modules/vue-style-loader/lib/addStylesClient.js").default
-var update = add("4e1d3786", content, false, {});
-// Hot Module Replacement
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/vue-style-loader/lib/addStylesClient.js":
-/*!**************************************************************!*\
-  !*** ./node_modules/vue-style-loader/lib/addStylesClient.js ***!
-  \**************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return addStylesClient; });
-/* harmony import */ var _listToStyles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./listToStyles */ "./node_modules/vue-style-loader/lib/listToStyles.js");
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-  Modified by Evan You @yyx990803
-*/
-
-
-
-var hasDocument = typeof document !== 'undefined'
-
-if (typeof DEBUG !== 'undefined' && DEBUG) {
-  if (!hasDocument) {
-    throw new Error(
-    'vue-style-loader cannot be used in a non-browser environment. ' +
-    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
-  ) }
-}
-
-/*
-type StyleObject = {
-  id: number;
-  parts: Array<StyleObjectPart>
-}
-
-type StyleObjectPart = {
-  css: string;
-  media: string;
-  sourceMap: ?string
-}
-*/
-
-var stylesInDom = {/*
-  [id: number]: {
-    id: number,
-    refs: number,
-    parts: Array<(obj?: StyleObjectPart) => void>
-  }
-*/}
-
-var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
-var singletonElement = null
-var singletonCounter = 0
-var isProduction = false
-var noop = function () {}
-var options = null
-var ssrIdKey = 'data-vue-ssr-id'
-
-// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-// tags it will allow on a page
-var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
-
-function addStylesClient (parentId, list, _isProduction, _options) {
-  isProduction = _isProduction
-
-  options = _options || {}
-
-  var styles = Object(_listToStyles__WEBPACK_IMPORTED_MODULE_0__["default"])(parentId, list)
-  addStylesToDom(styles)
-
-  return function update (newList) {
-    var mayRemove = []
-    for (var i = 0; i < styles.length; i++) {
-      var item = styles[i]
-      var domStyle = stylesInDom[item.id]
-      domStyle.refs--
-      mayRemove.push(domStyle)
-    }
-    if (newList) {
-      styles = Object(_listToStyles__WEBPACK_IMPORTED_MODULE_0__["default"])(parentId, newList)
-      addStylesToDom(styles)
-    } else {
-      styles = []
-    }
-    for (var i = 0; i < mayRemove.length; i++) {
-      var domStyle = mayRemove[i]
-      if (domStyle.refs === 0) {
-        for (var j = 0; j < domStyle.parts.length; j++) {
-          domStyle.parts[j]()
-        }
-        delete stylesInDom[domStyle.id]
-      }
-    }
-  }
-}
-
-function addStylesToDom (styles /* Array<StyleObject> */) {
-  for (var i = 0; i < styles.length; i++) {
-    var item = styles[i]
-    var domStyle = stylesInDom[item.id]
-    if (domStyle) {
-      domStyle.refs++
-      for (var j = 0; j < domStyle.parts.length; j++) {
-        domStyle.parts[j](item.parts[j])
-      }
-      for (; j < item.parts.length; j++) {
-        domStyle.parts.push(addStyle(item.parts[j]))
-      }
-      if (domStyle.parts.length > item.parts.length) {
-        domStyle.parts.length = item.parts.length
-      }
-    } else {
-      var parts = []
-      for (var j = 0; j < item.parts.length; j++) {
-        parts.push(addStyle(item.parts[j]))
-      }
-      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
-    }
-  }
-}
-
-function createStyleElement () {
-  var styleElement = document.createElement('style')
-  styleElement.type = 'text/css'
-  head.appendChild(styleElement)
-  return styleElement
-}
-
-function addStyle (obj /* StyleObjectPart */) {
-  var update, remove
-  var styleElement = document.querySelector('style[' + ssrIdKey + '~="' + obj.id + '"]')
-
-  if (styleElement) {
-    if (isProduction) {
-      // has SSR styles and in production mode.
-      // simply do nothing.
-      return noop
-    } else {
-      // has SSR styles but in dev mode.
-      // for some reason Chrome can't handle source map in server-rendered
-      // style tags - source maps in <style> only works if the style tag is
-      // created and inserted dynamically. So we remove the server rendered
-      // styles and inject new ones.
-      styleElement.parentNode.removeChild(styleElement)
-    }
-  }
-
-  if (isOldIE) {
-    // use singleton mode for IE9.
-    var styleIndex = singletonCounter++
-    styleElement = singletonElement || (singletonElement = createStyleElement())
-    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
-    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
-  } else {
-    // use multi-style-tag mode in all other cases
-    styleElement = createStyleElement()
-    update = applyToTag.bind(null, styleElement)
-    remove = function () {
-      styleElement.parentNode.removeChild(styleElement)
-    }
-  }
-
-  update(obj)
-
-  return function updateStyle (newObj /* StyleObjectPart */) {
-    if (newObj) {
-      if (newObj.css === obj.css &&
-          newObj.media === obj.media &&
-          newObj.sourceMap === obj.sourceMap) {
-        return
-      }
-      update(obj = newObj)
-    } else {
-      remove()
-    }
-  }
-}
-
-var replaceText = (function () {
-  var textStore = []
-
-  return function (index, replacement) {
-    textStore[index] = replacement
-    return textStore.filter(Boolean).join('\n')
-  }
-})()
-
-function applyToSingletonTag (styleElement, index, remove, obj) {
-  var css = remove ? '' : obj.css
-
-  if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = replaceText(index, css)
-  } else {
-    var cssNode = document.createTextNode(css)
-    var childNodes = styleElement.childNodes
-    if (childNodes[index]) styleElement.removeChild(childNodes[index])
-    if (childNodes.length) {
-      styleElement.insertBefore(cssNode, childNodes[index])
-    } else {
-      styleElement.appendChild(cssNode)
-    }
-  }
-}
-
-function applyToTag (styleElement, obj) {
-  var css = obj.css
-  var media = obj.media
-  var sourceMap = obj.sourceMap
-
-  if (media) {
-    styleElement.setAttribute('media', media)
-  }
-  if (options.ssrId) {
-    styleElement.setAttribute(ssrIdKey, obj.id)
-  }
-
-  if (sourceMap) {
-    // https://developer.chrome.com/devtools/docs/javascript-debugging
-    // this makes source maps inside style tags work properly in Chrome
-    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
-    // http://stackoverflow.com/a/26603875
-    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
-  }
-
-  if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = css
-  } else {
-    while (styleElement.firstChild) {
-      styleElement.removeChild(styleElement.firstChild)
-    }
-    styleElement.appendChild(document.createTextNode(css))
-  }
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-style-loader/lib/listToStyles.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/vue-style-loader/lib/listToStyles.js ***!
-  \***********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return listToStyles; });
-/**
- * Translates the list format produced by css-loader into something
- * easier to manipulate.
- */
-function listToStyles (parentId, list) {
-  var styles = []
-  var newStyles = {}
-  for (var i = 0; i < list.length; i++) {
-    var item = list[i]
-    var id = item[0]
-    var css = item[1]
-    var media = item[2]
-    var sourceMap = item[3]
-    var part = {
-      id: parentId + ':' + i,
-      css: css,
-      media: media,
-      sourceMap: sourceMap
-    }
-    if (!newStyles[id]) {
-      styles.push(newStyles[id] = { id: id, parts: [part] })
-    } else {
-      newStyles[id].parts.push(part)
-    }
-  }
-  return styles
-}
-
 
 /***/ }),
 

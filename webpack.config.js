@@ -1,5 +1,6 @@
 var path = require('path'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin');
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    SpritesmithPlugin = require('webpack-spritesmith');
 
 module.exports = [{
     mode: "development",
@@ -46,6 +47,19 @@ module.exports = [{
     plugins: [
         new ExtractTextPlugin({
             filename: '../stylesheets/main.css'
+        }),
+        new SpritesmithPlugin({
+            src: {
+                cwd: './public/images/pieces/',
+                glob: '*.png'
+            },
+            target: {
+                image: './public/images/sprite/sprite.png',
+                css: './assets/sass/common/sprite.scss'
+            },
+            apiOptions: {
+                cssImageRef: "/images/sprite/sprite.png"
+            }
         })
     ]
 }];

@@ -13,7 +13,8 @@ var matchingInfo = <%- JSON.stringify(matchingInfo) %>;
 var own = <%- JSON.stringify(own) %>;
 var game  = new Game(matchingInfo,own);
 var board = new Board(boardInfo,game);
-board.extractLegalArea(game,true);
+board.extractLegalArea(game);
+console.log(board);
 
 // 部屋に入室
 this.socket.emit("joinBattle", game.roomId);
@@ -30,6 +31,7 @@ var app = new Vue({
         teban: game.ownId == game.sente ? true : false,
         isCheck: {'isOwn':false,'isEnemy':false},
         isCheckMate: {'isOwn':false,'isEnemy':false},
+        invalid: {'Nihu':false,'Utihu':false},
 
     },
     methods: {
@@ -122,6 +124,20 @@ var app = new Vue({
                 // オブジェクトを配列に変換
                 var boardArr = this.board.convertBoard(this.board);
 
+                // 打ち歩詰めか判定
+                if(this.moveFrom == 1100 || this.moveFrom == 1200){
+                    boardArr[this.moveTo] = this.moveFrom - GlobalVar.HOLD;
+                    // 打った後の盤面を生成して確認
+                    var preBoard = new Board(boardArr,this.game);
+                    // 盤面を戻しておく
+                    boardArr[this.moveTo] = null;
+                    preBoard.extractLegalArea(this.game);
+                    var isCheckMate= preBoard.isCheckMate(preBoard);
+                    if(isCheckMate["isEnemy"]){
+                        this.invalid["Utihu"] = true;
+                    }
+                }
+
                 // 送る情報を詰める
                 let socketInfo = {
                   roomId: game.roomId,
@@ -131,6 +147,13 @@ var app = new Vue({
                   isEvolve: setEvolve,
                   isShot: setShot
                 }
+
+                // 先に表示上の盤面を更新しておく(高速化のため)
+                let tmpBoard = new Board(boardArr,this.game);
+                let tmpBoardArr = tmpBoard.convertBoard(tmpBoard);
+                tmpBoardArr = GlobalFunc.UpdateBoard(tmpBoardArr,tmpBoardArr[this.moveFrom],this.moveFrom,this.moveTo,setEvolve,setShot);
+                tmpBoard = new Board(tmpBoardArr,this.game);
+                this.board = tmpBoard;
 
                 // サーバーに送信
                 socket.emit("moveKoma", socketInfo);
@@ -149,13 +172,21 @@ var app = new Vue({
                 alert("勝ちました");
             }
         },
+        invalid: function(val,old){
+            if(val["Utihu"]){
+                this.moveFrom = null;
+                this.moveTo = null;
+                alert("打ち歩詰めは禁止手です");
+            }
+        }
     }
 });
 // 盤面更新
 this.socket.on("updateBoard", function (data) {
     let newBoard = new Board(data.board,app.$data.game);
-    data.teban ? newBoard.extractLegalArea(app.$data.game,true) : newBoard.extractLegalArea(app.$data.game,false);;
     app.$data.board       = newBoard;
+    app.$data.board.extractLegalArea(app.$data.game);
+    console.log(app.$data.board);
     app.$data.teban       = data.teban;
     app.$data.isCheck     = newBoard.isCheck(newBoard);
     app.$data.isCheckMate = newBoard.isCheckMate(newBoard);

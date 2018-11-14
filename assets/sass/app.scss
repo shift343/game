@@ -6,8 +6,28 @@
 // トップページ用
 @import "./layouts/top.scss";
 
+// 惑星ページ用
+@import "./layouts/planet.scss";
+
 // 将棋盤
 @import "./layouts/board.scss";
+
+// 将棋盤
+@import "./layouts/board.scss";
+
+// スプライト
+@import "./common/sprite.scss";
+
+@import "./common/sprite-responsive.scss";
+
+// スプライト(レスポンシブ化)
+// .Efu {  
+//     @include sprite($-efu);
+//     display: inline-block;
+// } 
+
+// スプライト画像
+// @import "./common/sprite.scss";
 
 
 // 対局ドア用

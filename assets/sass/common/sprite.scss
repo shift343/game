@@ -1,0 +1,387 @@
+// SCSS variables are information about icon's compiled state, stored under its original file name
+//
+// .icon-home {
+//   width: $icon-home-width;
+// }
+//
+// The large array-like variables contain all information about a single icon
+// $icon-home: x y offset_x offset_y width height total_width total_height image_path;
+//
+// At the bottom of this section, we provide information about the spritesheet itself
+// $spritesheet: width height image $spritesheet-sprites;
+$-efu-name: 'Efu';
+$-efu-x: 43px;
+$-efu-y: 0px;
+$-efu-offset-x: -43px;
+$-efu-offset-y: 0px;
+$-efu-width: 43px;
+$-efu-height: 48px;
+$-efu-total-width: 258px;
+$-efu-total-height: 240px;
+$-efu-image: '/images/sprite/sprite.png';
+$-efu: (43px, 0px, -43px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Efu', );
+$-egin-name: 'Egin';
+$-egin-x: 172px;
+$-egin-y: 96px;
+$-egin-offset-x: -172px;
+$-egin-offset-y: -96px;
+$-egin-width: 43px;
+$-egin-height: 48px;
+$-egin-total-width: 258px;
+$-egin-total-height: 240px;
+$-egin-image: '/images/sprite/sprite.png';
+$-egin: (172px, 96px, -172px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Egin', );
+$-ehi-name: 'Ehi';
+$-ehi-x: 86px;
+$-ehi-y: 0px;
+$-ehi-offset-x: -86px;
+$-ehi-offset-y: 0px;
+$-ehi-width: 43px;
+$-ehi-height: 48px;
+$-ehi-total-width: 258px;
+$-ehi-total-height: 240px;
+$-ehi-image: '/images/sprite/sprite.png';
+$-ehi: (86px, 0px, -86px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Ehi', );
+$-ekaku-name: 'Ekaku';
+$-ekaku-x: 0px;
+$-ekaku-y: 48px;
+$-ekaku-offset-x: 0px;
+$-ekaku-offset-y: -48px;
+$-ekaku-width: 43px;
+$-ekaku-height: 48px;
+$-ekaku-total-width: 258px;
+$-ekaku-total-height: 240px;
+$-ekaku-image: '/images/sprite/sprite.png';
+$-ekaku: (0px, 48px, 0px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Ekaku', );
+$-ekei-name: 'Ekei';
+$-ekei-x: 43px;
+$-ekei-y: 48px;
+$-ekei-offset-x: -43px;
+$-ekei-offset-y: -48px;
+$-ekei-width: 43px;
+$-ekei-height: 48px;
+$-ekei-total-width: 258px;
+$-ekei-total-height: 240px;
+$-ekei-image: '/images/sprite/sprite.png';
+$-ekei: (43px, 48px, -43px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Ekei', );
+$-ekin-name: 'Ekin';
+$-ekin-x: 86px;
+$-ekin-y: 48px;
+$-ekin-offset-x: -86px;
+$-ekin-offset-y: -48px;
+$-ekin-width: 43px;
+$-ekin-height: 48px;
+$-ekin-total-width: 258px;
+$-ekin-total-height: 240px;
+$-ekin-image: '/images/sprite/sprite.png';
+$-ekin: (86px, 48px, -86px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Ekin', );
+$-ekyo-name: 'Ekyo';
+$-ekyo-x: 129px;
+$-ekyo-y: 0px;
+$-ekyo-offset-x: -129px;
+$-ekyo-offset-y: 0px;
+$-ekyo-width: 43px;
+$-ekyo-height: 48px;
+$-ekyo-total-width: 258px;
+$-ekyo-total-height: 240px;
+$-ekyo-image: '/images/sprite/sprite.png';
+$-ekyo: (129px, 0px, -129px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Ekyo', );
+$-engin-name: 'Engin';
+$-engin-x: 129px;
+$-engin-y: 48px;
+$-engin-offset-x: -129px;
+$-engin-offset-y: -48px;
+$-engin-width: 43px;
+$-engin-height: 48px;
+$-engin-total-width: 258px;
+$-engin-total-height: 240px;
+$-engin-image: '/images/sprite/sprite.png';
+$-engin: (129px, 48px, -129px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Engin', );
+$-enkei-name: 'Enkei';
+$-enkei-x: 0px;
+$-enkei-y: 96px;
+$-enkei-offset-x: 0px;
+$-enkei-offset-y: -96px;
+$-enkei-width: 43px;
+$-enkei-height: 48px;
+$-enkei-total-width: 258px;
+$-enkei-total-height: 240px;
+$-enkei-image: '/images/sprite/sprite.png';
+$-enkei: (0px, 96px, 0px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Enkei', );
+$-enkyo-name: 'Enkyo';
+$-enkyo-x: 43px;
+$-enkyo-y: 96px;
+$-enkyo-offset-x: -43px;
+$-enkyo-offset-y: -96px;
+$-enkyo-width: 43px;
+$-enkyo-height: 48px;
+$-enkyo-total-width: 258px;
+$-enkyo-total-height: 240px;
+$-enkyo-image: '/images/sprite/sprite.png';
+$-enkyo: (43px, 96px, -43px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Enkyo', );
+$-eou-name: 'Eou';
+$-eou-x: 86px;
+$-eou-y: 96px;
+$-eou-offset-x: -86px;
+$-eou-offset-y: -96px;
+$-eou-width: 43px;
+$-eou-height: 48px;
+$-eou-total-width: 258px;
+$-eou-total-height: 240px;
+$-eou-image: '/images/sprite/sprite.png';
+$-eou: (86px, 96px, -86px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Eou', );
+$-eryu-name: 'Eryu';
+$-eryu-x: 129px;
+$-eryu-y: 96px;
+$-eryu-offset-x: -129px;
+$-eryu-offset-y: -96px;
+$-eryu-width: 43px;
+$-eryu-height: 48px;
+$-eryu-total-width: 258px;
+$-eryu-total-height: 240px;
+$-eryu-image: '/images/sprite/sprite.png';
+$-eryu: (129px, 96px, -129px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Eryu', );
+$-eto-name: 'Eto';
+$-eto-x: 172px;
+$-eto-y: 0px;
+$-eto-offset-x: -172px;
+$-eto-offset-y: 0px;
+$-eto-width: 43px;
+$-eto-height: 48px;
+$-eto-total-width: 258px;
+$-eto-total-height: 240px;
+$-eto-image: '/images/sprite/sprite.png';
+$-eto: (172px, 0px, -172px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Eto', );
+$-euma-name: 'Euma';
+$-euma-x: 172px;
+$-euma-y: 48px;
+$-euma-offset-x: -172px;
+$-euma-offset-y: -48px;
+$-euma-width: 43px;
+$-euma-height: 48px;
+$-euma-total-width: 258px;
+$-euma-total-height: 240px;
+$-euma-image: '/images/sprite/sprite.png';
+$-euma: (172px, 48px, -172px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Euma', );
+$-sfu-name: 'Sfu';
+$-sfu-x: 0px;
+$-sfu-y: 0px;
+$-sfu-offset-x: 0px;
+$-sfu-offset-y: 0px;
+$-sfu-width: 43px;
+$-sfu-height: 48px;
+$-sfu-total-width: 258px;
+$-sfu-total-height: 240px;
+$-sfu-image: '/images/sprite/sprite.png';
+$-sfu: (0px, 0px, 0px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sfu', );
+$-sgin-name: 'Sgin';
+$-sgin-x: 0px;
+$-sgin-y: 144px;
+$-sgin-offset-x: 0px;
+$-sgin-offset-y: -144px;
+$-sgin-width: 43px;
+$-sgin-height: 48px;
+$-sgin-total-width: 258px;
+$-sgin-total-height: 240px;
+$-sgin-image: '/images/sprite/sprite.png';
+$-sgin: (0px, 144px, 0px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sgin', );
+$-shi-name: 'Shi';
+$-shi-x: 43px;
+$-shi-y: 144px;
+$-shi-offset-x: -43px;
+$-shi-offset-y: -144px;
+$-shi-width: 43px;
+$-shi-height: 48px;
+$-shi-total-width: 258px;
+$-shi-total-height: 240px;
+$-shi-image: '/images/sprite/sprite.png';
+$-shi: (43px, 144px, -43px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Shi', );
+$-skaku-name: 'Skaku';
+$-skaku-x: 86px;
+$-skaku-y: 144px;
+$-skaku-offset-x: -86px;
+$-skaku-offset-y: -144px;
+$-skaku-width: 43px;
+$-skaku-height: 48px;
+$-skaku-total-width: 258px;
+$-skaku-total-height: 240px;
+$-skaku-image: '/images/sprite/sprite.png';
+$-skaku: (86px, 144px, -86px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Skaku', );
+$-skei-name: 'Skei';
+$-skei-x: 129px;
+$-skei-y: 144px;
+$-skei-offset-x: -129px;
+$-skei-offset-y: -144px;
+$-skei-width: 43px;
+$-skei-height: 48px;
+$-skei-total-width: 258px;
+$-skei-total-height: 240px;
+$-skei-image: '/images/sprite/sprite.png';
+$-skei: (129px, 144px, -129px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Skei', );
+$-skin-name: 'Skin';
+$-skin-x: 172px;
+$-skin-y: 144px;
+$-skin-offset-x: -172px;
+$-skin-offset-y: -144px;
+$-skin-width: 43px;
+$-skin-height: 48px;
+$-skin-total-width: 258px;
+$-skin-total-height: 240px;
+$-skin-image: '/images/sprite/sprite.png';
+$-skin: (172px, 144px, -172px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Skin', );
+$-skyo-name: 'Skyo';
+$-skyo-x: 215px;
+$-skyo-y: 0px;
+$-skyo-offset-x: -215px;
+$-skyo-offset-y: 0px;
+$-skyo-width: 43px;
+$-skyo-height: 48px;
+$-skyo-total-width: 258px;
+$-skyo-total-height: 240px;
+$-skyo-image: '/images/sprite/sprite.png';
+$-skyo: (215px, 0px, -215px, 0px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Skyo', );
+$-sngin-name: 'Sngin';
+$-sngin-x: 215px;
+$-sngin-y: 48px;
+$-sngin-offset-x: -215px;
+$-sngin-offset-y: -48px;
+$-sngin-width: 43px;
+$-sngin-height: 48px;
+$-sngin-total-width: 258px;
+$-sngin-total-height: 240px;
+$-sngin-image: '/images/sprite/sprite.png';
+$-sngin: (215px, 48px, -215px, -48px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sngin', );
+$-snkei-name: 'Snkei';
+$-snkei-x: 215px;
+$-snkei-y: 96px;
+$-snkei-offset-x: -215px;
+$-snkei-offset-y: -96px;
+$-snkei-width: 43px;
+$-snkei-height: 48px;
+$-snkei-total-width: 258px;
+$-snkei-total-height: 240px;
+$-snkei-image: '/images/sprite/sprite.png';
+$-snkei: (215px, 96px, -215px, -96px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Snkei', );
+$-snkyo-name: 'Snkyo';
+$-snkyo-x: 215px;
+$-snkyo-y: 144px;
+$-snkyo-offset-x: -215px;
+$-snkyo-offset-y: -144px;
+$-snkyo-width: 43px;
+$-snkyo-height: 48px;
+$-snkyo-total-width: 258px;
+$-snkyo-total-height: 240px;
+$-snkyo-image: '/images/sprite/sprite.png';
+$-snkyo: (215px, 144px, -215px, -144px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Snkyo', );
+$-sou-name: 'Sou';
+$-sou-x: 0px;
+$-sou-y: 192px;
+$-sou-offset-x: 0px;
+$-sou-offset-y: -192px;
+$-sou-width: 43px;
+$-sou-height: 48px;
+$-sou-total-width: 258px;
+$-sou-total-height: 240px;
+$-sou-image: '/images/sprite/sprite.png';
+$-sou: (0px, 192px, 0px, -192px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sou', );
+$-sryu-name: 'Sryu';
+$-sryu-x: 43px;
+$-sryu-y: 192px;
+$-sryu-offset-x: -43px;
+$-sryu-offset-y: -192px;
+$-sryu-width: 43px;
+$-sryu-height: 48px;
+$-sryu-total-width: 258px;
+$-sryu-total-height: 240px;
+$-sryu-image: '/images/sprite/sprite.png';
+$-sryu: (43px, 192px, -43px, -192px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sryu', );
+$-sto-name: 'Sto';
+$-sto-x: 86px;
+$-sto-y: 192px;
+$-sto-offset-x: -86px;
+$-sto-offset-y: -192px;
+$-sto-width: 43px;
+$-sto-height: 48px;
+$-sto-total-width: 258px;
+$-sto-total-height: 240px;
+$-sto-image: '/images/sprite/sprite.png';
+$-sto: (86px, 192px, -86px, -192px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Sto', );
+$-suma-name: 'Suma';
+$-suma-x: 129px;
+$-suma-y: 192px;
+$-suma-offset-x: -129px;
+$-suma-offset-y: -192px;
+$-suma-width: 43px;
+$-suma-height: 48px;
+$-suma-total-width: 258px;
+$-suma-total-height: 240px;
+$-suma-image: '/images/sprite/sprite.png';
+$-suma: (129px, 192px, -129px, -192px, 43px, 48px, 258px, 240px, '/images/sprite/sprite.png', 'Suma', );
+$spritesheet-width: 258px;
+$spritesheet-height: 240px;
+$spritesheet-image: '/images/sprite/sprite.png';
+$spritesheet-sprites: ($-efu, $-egin, $-ehi, $-ekaku, $-ekei, $-ekin, $-ekyo, $-engin, $-enkei, $-enkyo, $-eou, $-eryu, $-eto, $-euma, $-sfu, $-sgin, $-shi, $-skaku, $-skei, $-skin, $-skyo, $-sngin, $-snkei, $-snkyo, $-sou, $-sryu, $-sto, $-suma, );
+$spritesheet: (258px, 240px, '/images/sprite/sprite.png', $spritesheet-sprites, );
+
+// The provided mixins are intended to be used with the array-like variables
+//
+// .icon-home {
+//   @include sprite-width($icon-home);
+// }
+//
+// .icon-email {
+//   @include sprite($icon-email);
+// }
+//
+// Example usage in HTML:
+//
+// `display: block` sprite:
+// <div class="icon-home"></div>
+//
+// To change `display` (e.g. `display: inline-block;`), we suggest using a common CSS class:
+//
+// // CSS
+// .icon {
+//   display: inline-block;
+// }
+//
+// // HTML
+// <i class="icon icon-home"></i>
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 5);
+}
+
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 6);
+}
+
+@mixin sprite-position($sprite) {
+  $sprite-offset-x: nth($sprite, 3);
+  $sprite-offset-y: nth($sprite, 4);
+  background-position: $sprite-offset-x  $sprite-offset-y;
+}
+
+@mixin sprite-image($sprite) {
+  $sprite-image: nth($sprite, 9);
+  background-image: url(#{$sprite-image});
+}
+
+@mixin sprite($sprite) {
+  @include sprite-image($sprite);
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
+
+// The `sprites` mixin generates identical output to the CSS template
+//   but can be overridden inside of SCSS
+//
+// @include sprites($spritesheet-sprites);
+@mixin sprites($sprites) {
+  @each $sprite in $sprites {
+    $sprite-name: nth($sprite, 10);
+    .#{$sprite-name} {
+      @include sprite($sprite);
+    }
+  }
+}

@@ -22,7 +22,7 @@ export default class Piece {
         this.isNhi    = isHold ? false : koma == GlobalVar.NHI ? true : false;
         this.moveArea = [];
         if(this.isHold) this.setHold();
-        this.komaImg  = ((this.isHold && this.koma == 0) || is_null(this.koma)) ? null : this.setKomaImg();
+        this.komaClass  = ((this.isHold && this.koma == 0) || is_null(this.koma)) ? null : this.setKomaClass();
     }
 
     setHold(){
@@ -45,37 +45,37 @@ export default class Piece {
         }
     }
 
-    setKomaImg(){
+    setKomaClass(){
         if(this.isOwn){
-            if(this.isHu) return "Sfu.png";
-            if(this.isKy) return "Skyo.png";
-            if(this.isKe) return "Skei.png";
-            if(this.isGi) return "Sgin.png";
-            if(this.isKi) return "Skin.png";
-            if(this.isKa) return "Skaku.png";
-            if(this.isHi) return "Shi.png";
-            if(this.isOu) return "Sou.png";
-            if(this.isNhu) return "Sto.png";
-            if(this.isNky) return "Snkyo.png";
-            if(this.isNke) return "Snkei.png";
-            if(this.isNgi) return "Sngin.png";
-            if(this.isNka) return "Suma.png";
-            if(this.isNhi) return "Sryu.png";
+            if(this.isHu) return "Sfu";
+            if(this.isKy) return "Skyo";
+            if(this.isKe) return "Skei";
+            if(this.isGi) return "Sgin";
+            if(this.isKi) return "Skin";
+            if(this.isKa) return "Skaku";
+            if(this.isHi) return "Shi";
+            if(this.isOu) return "Sou";
+            if(this.isNhu) return "Sto";
+            if(this.isNky) return "Snkyo";
+            if(this.isNke) return "Snkei";
+            if(this.isNgi) return "Sngin";
+            if(this.isNka) return "Suma";
+            if(this.isNhi) return "Sryu";
         }else{
-            if(this.isHu) return "Efu.png";
-            if(this.isKy) return "Ekyo.png";
-            if(this.isKe) return "Ekei.png";
-            if(this.isGi) return "Egin.png";
-            if(this.isKi) return "Ekin.png";
-            if(this.isKa) return "Ekaku.png";
-            if(this.isHi) return "Ehi.png";
-            if(this.isOu) return "Eou.png";
-            if(this.isNhu) return "Eto.png";
-            if(this.isNky) return "Enkyo.png";
-            if(this.isNke) return "Enkei.png";
-            if(this.isNgi) return "Engin.png";
-            if(this.isNka) return "Euma.png";
-            if(this.isNhi) return "Eryu.png";
+            if(this.isHu) return "Efu";
+            if(this.isKy) return "Ekyo";
+            if(this.isKe) return "Ekei";
+            if(this.isGi) return "Egin";
+            if(this.isKi) return "Ekin";
+            if(this.isKa) return "Ekaku";
+            if(this.isHi) return "Ehi";
+            if(this.isOu) return "Eou";
+            if(this.isNhu) return "Eto";
+            if(this.isNky) return "Enkyo";
+            if(this.isNke) return "Enkei";
+            if(this.isNgi) return "Engin";
+            if(this.isNka) return "Euma";
+            if(this.isNhi) return "Eryu";
         }
     }
 

@@ -102,8 +102,12 @@
             50% { background: rgba(85, 255, 51, 0.5); }
             100%{ background: rgba(85, 255, 51, 0.3); }
         }
-        .hold{
-            display: inline-block;
+        .hold_space{
+            width: 100%;
+            .hold{
+                display: inline-block;
+                width: calc(100% / 9);
+            }
         }
         .checkedEnemy{
             position: fixed;

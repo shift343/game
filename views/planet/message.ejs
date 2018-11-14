@@ -1,0 +1,19 @@
+<div id="message">
+    <div v-show="showMsg" class="message-back">
+        <div class="message-icon"></div>
+        <div class="message-text"></div>
+        <div class="message-answer"></div>
+    </div>
+</div>
+
+<script>
+let message = new Vue({
+    el: '#message',
+    data: {
+        showMsg: true,
+    },
+    methods: {
+
+    }
+});
+</script>

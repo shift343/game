@@ -1,3 +1,4 @@
+@charset "UTF-8";
 html {
   height: 100%; }
   html body {
@@ -21,6 +22,27 @@ html {
   text-align: center;
   list-style: none;
   display: flex; }
+
+#planet_page .canvas-container #main_canvas {
+  background-image: linear-gradient(#F6EBFF, #FCFAD9); }
+
+#planet_page .canvas-container #message .message-back {
+  position: fixed;
+  bottom: 500px;
+  /* 固定する位置 */
+  left: 0;
+  /* 固定する位置 */
+  right: 0;
+  /* 固定する位置 */
+  width: 100%;
+  height: 100px;
+  background: #333; }
+  #planet_page .canvas-container #message .message-back .message-icon {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    left: 0;
+    border: 1px solid #fff; }
 
 #battle_page #shogi {
   position: absolute;
@@ -129,8 +151,11 @@ html {
     background: rgba(85, 255, 51, 0.5); }
   100% {
     background: rgba(85, 255, 51, 0.3); } }
-  #battle_page #shogi .hold {
-    display: inline-block; }
+  #battle_page #shogi .hold_space {
+    width: 100%; }
+    #battle_page #shogi .hold_space .hold {
+      display: inline-block;
+      width: calc(100% / 9); }
   #battle_page #shogi .checkedEnemy {
     position: fixed;
     width: 220px;
@@ -153,5 +178,588 @@ html {
     background-image: url("../images/parts/check_o.png");
     background-repeat: no-repeat;
     background-size: 100%; }
+
+#battle_page #shogi {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: auto; }
+  #battle_page #shogi .top, #battle_page #shogi .bottom {
+    width: 100%;
+    height: 52px;
+    display: flex;
+    margin: auto;
+    box-sizing: border-box;
+    border: 1px solid black;
+    background-image: url("../images/parts/cherry_back_top.png");
+    background-size: cover; }
+  #battle_page #shogi .board {
+    margin: auto;
+    box-sizing: border-box;
+    border: 1px solid black;
+    width: 100%;
+    height: 100%;
+    margin: auto auto;
+    font-size: 0px;
+    position: relative; }
+    #battle_page #shogi .board .sente, #battle_page #shogi .board .gote {
+      top: 2%;
+      left: 2%;
+      width: 96%;
+      height: 96%;
+      position: absolute;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+      background-image: url("../images/parts/bg_wood_rate.png");
+      background-repeat: no-repeat;
+      background-size: 100%;
+      border-left: 1px solid #60392d;
+      border-bottom: 1px solid #60392d; }
+      #battle_page #shogi .board .sente .square, #battle_page #shogi .board .gote .square {
+        width: calc(100% / 9);
+        height: calc(100% / 9);
+        display: inline-block;
+        color: black;
+        font-size: 2px;
+        text-align: center;
+        position: relative;
+        border-top: 1px solid #60392d;
+        border-right: 1px solid #60392d;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box; }
+  #battle_page #shogi .selection {
+    width: calc(100% / 9);
+    height: calc(100% / 9);
+    background-color: black;
+    opacity: 0.4; }
+  #battle_page #shogi .blackOut {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.2;
+    position: absolute; }
+  #battle_page #shogi .onTap {
+    animation: bg-color 2s infinite;
+    -webkit-animation: bg-color 2s infinite;
+    /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */ }
+
+@-webkit-keyframes bg-color {
+  0% {
+    background: rgba(255, 255, 0, 0.3); }
+  50% {
+    background: rgba(255, 255, 0, 0.7); }
+  100% {
+    background: rgba(255, 255, 0, 0.3); } }
+
+@keyframes bg-color {
+  0% {
+    background: rgba(255, 255, 0, 0.3); }
+  50% {
+    background: rgba(255, 255, 0, 0.8); }
+  100% {
+    background: rgba(255, 255, 0, 0.3); } }
+  #battle_page #shogi .onTaped {
+    animation: bg-color2 2s infinite;
+    -webkit-animation: bg-color2 2s infinite;
+    /* box-shadow: 0 0 0 3px rgba(0,0,0,0.5) inset; */ }
+
+@-webkit-keyframes bg-color2 {
+  0% {
+    background: rgba(85, 255, 51, 0.3); }
+  50% {
+    background: rgba(85, 255, 51, 0.5); }
+  100% {
+    background: rgba(85, 255, 51, 0.3); } }
+
+@keyframes bg-color2 {
+  0% {
+    background: rgba(85, 255, 51, 0.3); }
+  50% {
+    background: rgba(85, 255, 51, 0.5); }
+  100% {
+    background: rgba(85, 255, 51, 0.3); } }
+  #battle_page #shogi .hold_space {
+    width: 100%; }
+    #battle_page #shogi .hold_space .hold {
+      display: inline-block;
+      width: calc(100% / 9); }
+  #battle_page #shogi .checkedEnemy {
+    position: fixed;
+    width: 220px;
+    height: 130px;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../images/parts/check_e.png");
+    background-repeat: no-repeat;
+    background-size: 100%; }
+  #battle_page #shogi .checkedOwn {
+    position: fixed;
+    width: 220px;
+    height: 130px;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url("../images/parts/check_o.png");
+    background-repeat: no-repeat;
+    background-size: 100%; }
+
+.Efu {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 20% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Efu:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Egin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 80% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Egin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Ehi {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 40% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Ehi:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Ekaku {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 0% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Ekaku:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Ekei {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 20% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Ekei:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Ekin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 40% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Ekin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Ekyo {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 60% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Ekyo:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Engin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 60% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Engin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Enkei {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 0% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Enkei:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Enkyo {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 20% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Enkyo:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Eou {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 40% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Eou:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Eryu {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 60% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Eryu:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Eto {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 80% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Eto:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Euma {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 80% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Euma:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sfu {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 0% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sfu:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sgin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 0% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sgin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Shi {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 20% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Shi:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Skaku {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 40% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Skaku:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Skei {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 60% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Skei:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Skin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 80% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Skin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Skyo {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 100% 0%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Skyo:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sngin {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 100% 25%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sngin:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Snkei {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 100% 50%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Snkei:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Snkyo {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 100% 75%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Snkyo:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sou {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 0% 100%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sou:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sryu {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 20% 100%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sryu:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Sto {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 40% 100%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Sto:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
+
+.Suma {
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+  font-size: 0;
+  background-image: url("/images/sprite/sprite.png");
+  background-size: 600% 500%;
+  background-position: 60% 100%;
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+  .Suma:after {
+    content: '';
+    display: block;
+    padding-top: 111.62791%; }
 
 /*# sourceMappingURL=main.css.map*/

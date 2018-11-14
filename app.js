@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var battleRouter = require('./routes/battle');
 var matchingRouter = require('./routes/matching');
 var debugRouter = require('./routes/debug'); // 動作テスト用
+var planetRouter = require('./routes/planet'); // 動作テスト用
 
 var session = require('express-session');
 
@@ -46,7 +47,9 @@ var sessionCheck = function(req, res, next) {
   if (req.session.own) {
     next();
   } else {
-    res.redirect('/login');
+    next();
+
+    // res.redirect('/login');
   }
 };
 app.use('/register', registerRouter);
@@ -57,6 +60,7 @@ app.use('/users', usersRouter);
 app.use('/battle', battleRouter);
 app.use('/matching', matchingRouter);
 app.use('/debug', debugRouter);
+app.use('/planet', planetRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
